@@ -2,19 +2,37 @@
   {
     "arguments": [
       "/usr/bin/g++",
-      "-c",
       "-std=c++20",
       "-Iinclude",
       "-Wall",
       "-Wextra",
       "-Werror",
       "-Wconversion",
+      "-c",
       "-o",
-      "calendar",
+      "build/src/day.o",
+      "src/day.cpp"
+    ],
+    "directory": "/home/margot/Documents/proj/calendar",
+    "file": "/home/margot/Documents/proj/calendar/src/day.cpp",
+    "output": "/home/margot/Documents/proj/calendar/build/src/day.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-std=c++20",
+      "-Iinclude",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wconversion",
+      "-c",
+      "-o",
+      "build/main.o",
       "main.cpp"
     ],
     "directory": "/home/margot/Documents/proj/calendar",
     "file": "/home/margot/Documents/proj/calendar/main.cpp",
-    "output": "/home/margot/Documents/proj/calendar/calendar"
+    "output": "/home/margot/Documents/proj/calendar/build/main.o"
   }
 ]

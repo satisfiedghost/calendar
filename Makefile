@@ -1,11 +1,38 @@
-CPPFLAGS := -std=c++20 -Iinclude -MP -MMD -Wall -Wextra -Werror -Wconversion
+CXX := g++
+CXXFLAGS := -std=c++20 -Iinclude -MP -MMD -Wall -Wextra -Werror -Wconversion -O2
 
-.PHONY: clean clena
+.PHONY: clean clena all
 
-calendar:
-	$(CXX) $(CPPFLAGS) main.cpp day.cpp -o calendar
+SRC_DIR := src
+OBJ_DIR := build
+
+# find all .cpp files + main
+SRCS := $(wildcard $(SRC_DIR)/*.cpp) main.cpp
+
+# each TU needs a .o
+# pattern replacement $(VAR:pattern=replacement)
+OBJS := $(SRCS:%.cpp=$(OBJ_DIR)/%.o)
+
+# Dependency files
+DEPS := $(OBJS:%.o=%.d)
+
+# target executable
+TARGET := calendar
+
+all: $(TARGET)
+
+# link
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+# compile
+$(OBJ_DIR)/%.o: %.cpp
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clena: clean
 
 clean:
-	rm -frv calendar
+	rm -frv $(OBJ_DIR) $(TARGET)
+
+-include $(DEPS)
