@@ -1,0 +1,20 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-std=c++20",
+      "-Iinclude",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wconversion",
+      "-o",
+      "calendar",
+      "main.cpp"
+    ],
+    "directory": "/home/margot/Documents/proj/calendar",
+    "file": "/home/margot/Documents/proj/calendar/main.cpp",
+    "output": "/home/margot/Documents/proj/calendar/calendar"
+  }
+]
