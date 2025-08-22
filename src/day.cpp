@@ -7,6 +7,17 @@ std::ostream& operator<<(std::ostream& os, const Day& day) {
     day.m_month_str << " " <<
     std::setw(2) << std::setfill('0') << static_cast<unsigned>(day.m_year_month_day.day()) << " " <<
     static_cast<int>(day.m_year_month_day.year());
+
+  if (day.m_events.size()) {
+    os << std::endl << "Events:" << std::endl;
+    for (auto it = day.m_events.begin(); it != day.m_events.end(); it++) {
+      os << "\t" << (*it).get_context();
+      if (std::next(it) != day.m_events.end()) {
+        os << std::endl;
+      }
+    }
+  }
+
   return os;
 }
 
@@ -61,6 +72,10 @@ std::string Day::month_to_str(std::chrono::month month) {
     default:
       return "???";
   }
+}
+
+void Day::add_event(Events::Event &event) {
+  m_events.push_back(event);
 }
 
 }

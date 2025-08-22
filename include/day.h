@@ -2,6 +2,8 @@
 #include <iostream>
 #include <chrono>
 #include <iomanip>
+#include "event.h"
+#include <vector>
 
 namespace Calendar {
 
@@ -14,9 +16,12 @@ public:
     , m_weekday(m_sys_days)
     , m_weekday_str(weekday_to_str(m_weekday))
     , m_month_str(month_to_str(m_year_month_day.month()))
+    , m_events()
   {}
 
   friend std::ostream& operator<<(std::ostream& os, const Day& d);
+
+  void add_event(Events::Event& event);
 
 private:
 
@@ -28,6 +33,8 @@ private:
   const std::chrono::weekday m_weekday;
   const std::string m_weekday_str;
   const std::string m_month_str;
+
+  std::vector<Events::Event> m_events;
 };
 
 
