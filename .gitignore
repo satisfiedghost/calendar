@@ -1,3 +1,6 @@
 calendar
 .cache/
 build/
+*.calendar
+*.tmp
+backup

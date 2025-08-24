@@ -7,13 +7,23 @@ using namespace std::chrono;
 constexpr year MIN_YEAR{1970};
 constexpr year MAX_YEAR{2100};
 
-Calendar::Calendar() {
+Calendar::Calendar(std::string cal_file)
+: m_disk_storage(cal_file) {
   for (auto y = MIN_YEAR; y <= MAX_YEAR; y++) {
     m_years.emplace_back(Year(y));
   }
+
+  // read all events on disk
+  while (auto time_and_event = m_disk_storage.load_event()) {
+    auto& [time, event] = *time_and_event;
+    add_event(time, event, false);
+  }
 }
 
-void Calendar::add_event(const std::chrono::year_month_day ymd, const Events::TodEvent& e) {
+void Calendar::add_event(const std::chrono::year_month_day ymd, const Events::TodEvent& e, bool writethrough) {
+  if (writethrough) {
+    m_disk_storage.save(ymd, e);
+  }
   m_event_store.add_event(ymd, e);
 }
 

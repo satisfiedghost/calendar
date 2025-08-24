@@ -4,10 +4,17 @@
 
 #include "event.h"
 
+namespace Storage {
+  class DiskStorage; // forward decl so this can save an event to disk
+}
+
+
 namespace Events {
 
 // Time of Day event, the most common
 class TodEvent : protected Event {
+  friend class Storage::DiskStorage;
+
 public:
   TodEvent(std::string context, unsigned hour, unsigned minute) 
     : Event(context) 

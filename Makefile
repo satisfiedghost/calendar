@@ -3,7 +3,7 @@ CXXFLAGS := -std=c++20 -MP -MMD -Wall -Wextra -Werror -Wconversion -O2
 
 .PHONY: clean clena all
 INC_DIRS := include
-SRC_DIRS := src src/events src/ymd
+SRC_DIRS := src src/events src/ymd src/disk
 OBJ_DIR := build
 
 CXXFLAGS += $(addprefix -I,$(INC_DIRS))
