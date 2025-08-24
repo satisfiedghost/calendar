@@ -16,17 +16,30 @@ class TodEvent : protected Event {
   friend class Storage::DiskStorage;
 
 public:
-  TodEvent(std::string context, unsigned hour, unsigned minute) 
+  virtual ~TodEvent() = default;
+
+  TodEvent(std::string context, std::chrono::year_month_day ymd, std::chrono::hh_mm_ss<std::chrono::seconds> hms)
     : Event(context) 
-    , m_tod{std::chrono::seconds{hour * 3600 + minute * 60}} {
-  }
+    , m_tod{std::chrono::seconds{hms.hours().count() * 3600 + hms.minutes().count() + 60}}
+    , m_sys_days(ymd)
+  {}
+
+  TodEvent(std::string context, std::chrono::year_month_day ymd, std::chrono::seconds tod)
+    : TodEvent(context, ymd, std::chrono::hh_mm_ss<std::chrono::seconds>(tod))
+    {}
+
+  TodEvent(std::string context, std::chrono::year_month_day ymd, std::chrono::hours h, std::chrono::minutes m)
+    : TodEvent(context, ymd, std::chrono::seconds(h.count() * 3600 + m.count() * 60))
+  {}
+
+  const std::chrono::year_month_day get_ymd() const { return std::chrono::year_month_day(m_sys_days); }
 
   friend std::ostream& operator<<(std::ostream&, const TodEvent&);
 
   auto operator<=>(const TodEvent&) const = default;
 private:
-  // TODO - this should be ymd aware
   std::chrono::seconds m_tod; // time since midnight
+  std::chrono::sys_days m_sys_days;
 };
 
 }

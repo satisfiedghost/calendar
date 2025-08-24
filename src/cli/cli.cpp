@@ -11,7 +11,7 @@ namespace CLI {
 using namespace std::chrono;
 
 
-std::tuple<std::chrono::year_month_day, Events::TodEvent> CLIParser::create_event() {
+Events::TodEvent CLIParser::create_event() {
   std::string description;
   std::cout << "Enter a description: ";
   std::getline(std::cin >> std::ws, description);
@@ -30,9 +30,7 @@ std::tuple<std::chrono::year_month_day, Events::TodEvent> CLIParser::create_even
   year_month_day ymd{year{y}, month{mo}, day{d}};
   hh_mm_ss<seconds> mmhh{hours{h} + minutes{m}};
 
-  auto tup = std::make_tuple(ymd, Events::TodEvent(description, (unsigned)mmhh.hours().count(), (unsigned)mmhh.minutes().count()));
-
-  return tup;
+  return Events::TodEvent(description, ymd, mmhh);
 }
 
 }

@@ -10,15 +10,14 @@ constexpr year MAX_YEAR{2100};
 Calendar::Calendar(std::string cal_file)
 : m_disk_storage(cal_file) {
   // read all events on disk
-  while (auto time_and_event = m_disk_storage.load_event()) {
-    auto& [time, event] = *time_and_event;
-    add_event(time, event, false);
+  while (auto event = m_disk_storage.load_event()) {
+    add_event(*event, false);
   }
 }
 
-void Calendar::add_event(const std::chrono::year_month_day ymd, const Events::TodEvent& in_event, bool writethrough) {
+void Calendar::add_event(const Events::TodEvent& in_event, bool writethrough) {
   // check if this event already exists
-  if (auto events = m_event_store.get_events(ymd)) {
+  if (auto events = m_event_store.get_events(in_event.get_ymd())) {
     for (const auto& e : *events) {
     // don't insert this if a matching event exists on this day
       if (*e == in_event) {
@@ -28,9 +27,9 @@ void Calendar::add_event(const std::chrono::year_month_day ymd, const Events::To
   }
 
   if (writethrough) {
-    m_disk_storage.save(ymd, in_event);
+    m_disk_storage.save(in_event);
   }
-  m_event_store.add_event(ymd, in_event);
+  m_event_store.add_event(in_event);
 }
 
 

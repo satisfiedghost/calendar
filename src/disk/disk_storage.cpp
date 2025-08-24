@@ -1,7 +1,6 @@
 #include <chrono>
 #include <filesystem>
 #include <sstream>
-#include <tuple>
 
 #include "disk/disk_storage.h"
 #include "events/tod_event.h"
@@ -72,9 +71,10 @@ DiskStorage::~DiskStorage() {
 
 }
 
-void DiskStorage::save(const year_month_day ymd, const Events::TodEvent& event) {
+void DiskStorage::save(const Events::TodEvent& event) {
   m_outfile << event.m_context << DELIM;
 
+  auto ymd = event.get_ymd();
   m_outfile << static_cast<int>(ymd.year()) << DELIM;
   m_outfile << static_cast<unsigned int>(ymd.month()) << DELIM;
   m_outfile << static_cast<unsigned int>(ymd.day()) << DELIM;
@@ -85,7 +85,7 @@ void DiskStorage::save(const year_month_day ymd, const Events::TodEvent& event) 
   m_outfile << NEWLINE;
 }
 
-std::optional<std::tuple<year_month_day, Events::TodEvent>> DiskStorage::load_event() {
+std::optional<Events::TodEvent> DiskStorage::load_event() {
   // TODO - probably don't need to allocate resources on every call
   std::string line;
   std::getline(m_infile, line);
@@ -103,10 +103,10 @@ std::optional<std::tuple<year_month_day, Events::TodEvent>> DiskStorage::load_ev
 
   iss >> in_year >> in_month >> in_day >> in_hour >> in_minute;
 
-  Events::TodEvent event(in_context, in_hour, in_minute);
-  year_month_day ymd{year{in_year}, month{in_month}, day{in_day}};
+  year_month_day&& ymd{year{in_year}, month{in_month}, day{in_day}};
+  Events::TodEvent event(in_context, ymd, hours{in_hour}, minutes{in_minute});
 
-  return std::make_tuple(ymd, event);
+  return event;
 }
 
 //void DiskStorage::flush() {

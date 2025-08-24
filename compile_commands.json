@@ -14,9 +14,9 @@
       "build/src/calendar.o",
       "src/calendar.cpp"
     ],
-    "directory": "/home/margot/Documents/proj/calendar",
-    "file": "/home/margot/Documents/proj/calendar/src/calendar.cpp",
-    "output": "/home/margot/Documents/proj/calendar/build/src/calendar.o"
+    "directory": "/home/margot/Documents/proj/calendar2",
+    "file": "/home/margot/Documents/proj/calendar2/src/calendar.cpp",
+    "output": "/home/margot/Documents/proj/calendar2/build/src/calendar.o"
   },
   {
     "arguments": [
@@ -33,9 +33,9 @@
       "build/src/date_strings.o",
       "src/date_strings.cpp"
     ],
-    "directory": "/home/margot/Documents/proj/calendar",
-    "file": "/home/margot/Documents/proj/calendar/src/date_strings.cpp",
-    "output": "/home/margot/Documents/proj/calendar/build/src/date_strings.o"
+    "directory": "/home/margot/Documents/proj/calendar2",
+    "file": "/home/margot/Documents/proj/calendar2/src/date_strings.cpp",
+    "output": "/home/margot/Documents/proj/calendar2/build/src/date_strings.o"
   },
   {
     "arguments": [
@@ -52,9 +52,9 @@
       "build/src/events/event.o",
       "src/events/event.cpp"
     ],
-    "directory": "/home/margot/Documents/proj/calendar",
-    "file": "/home/margot/Documents/proj/calendar/src/events/event.cpp",
-    "output": "/home/margot/Documents/proj/calendar/build/src/events/event.o"
+    "directory": "/home/margot/Documents/proj/calendar2",
+    "file": "/home/margot/Documents/proj/calendar2/src/events/event.cpp",
+    "output": "/home/margot/Documents/proj/calendar2/build/src/events/event.o"
   },
   {
     "arguments": [
@@ -71,9 +71,9 @@
       "build/src/events/event_store.o",
       "src/events/event_store.cpp"
     ],
-    "directory": "/home/margot/Documents/proj/calendar",
-    "file": "/home/margot/Documents/proj/calendar/src/events/event_store.cpp",
-    "output": "/home/margot/Documents/proj/calendar/build/src/events/event_store.o"
+    "directory": "/home/margot/Documents/proj/calendar2",
+    "file": "/home/margot/Documents/proj/calendar2/src/events/event_store.cpp",
+    "output": "/home/margot/Documents/proj/calendar2/build/src/events/event_store.o"
   },
   {
     "arguments": [
@@ -90,9 +90,9 @@
       "build/src/events/tod_event.o",
       "src/events/tod_event.cpp"
     ],
-    "directory": "/home/margot/Documents/proj/calendar",
-    "file": "/home/margot/Documents/proj/calendar/src/events/tod_event.cpp",
-    "output": "/home/margot/Documents/proj/calendar/build/src/events/tod_event.o"
+    "directory": "/home/margot/Documents/proj/calendar2",
+    "file": "/home/margot/Documents/proj/calendar2/src/events/tod_event.cpp",
+    "output": "/home/margot/Documents/proj/calendar2/build/src/events/tod_event.o"
   },
   {
     "arguments": [
@@ -109,9 +109,9 @@
       "build/src/ymd/day.o",
       "src/ymd/day.cpp"
     ],
-    "directory": "/home/margot/Documents/proj/calendar",
-    "file": "/home/margot/Documents/proj/calendar/src/ymd/day.cpp",
-    "output": "/home/margot/Documents/proj/calendar/build/src/ymd/day.o"
+    "directory": "/home/margot/Documents/proj/calendar2",
+    "file": "/home/margot/Documents/proj/calendar2/src/ymd/day.cpp",
+    "output": "/home/margot/Documents/proj/calendar2/build/src/ymd/day.o"
   },
   {
     "arguments": [
@@ -128,9 +128,9 @@
       "build/src/ymd/month.o",
       "src/ymd/month.cpp"
     ],
-    "directory": "/home/margot/Documents/proj/calendar",
-    "file": "/home/margot/Documents/proj/calendar/src/ymd/month.cpp",
-    "output": "/home/margot/Documents/proj/calendar/build/src/ymd/month.o"
+    "directory": "/home/margot/Documents/proj/calendar2",
+    "file": "/home/margot/Documents/proj/calendar2/src/ymd/month.cpp",
+    "output": "/home/margot/Documents/proj/calendar2/build/src/ymd/month.o"
   },
   {
     "arguments": [
@@ -147,9 +147,9 @@
       "build/src/ymd/year.o",
       "src/ymd/year.cpp"
     ],
-    "directory": "/home/margot/Documents/proj/calendar",
-    "file": "/home/margot/Documents/proj/calendar/src/ymd/year.cpp",
-    "output": "/home/margot/Documents/proj/calendar/build/src/ymd/year.o"
+    "directory": "/home/margot/Documents/proj/calendar2",
+    "file": "/home/margot/Documents/proj/calendar2/src/ymd/year.cpp",
+    "output": "/home/margot/Documents/proj/calendar2/build/src/ymd/year.o"
   },
   {
     "arguments": [
@@ -166,9 +166,28 @@
       "build/src/disk/disk_storage.o",
       "src/disk/disk_storage.cpp"
     ],
-    "directory": "/home/margot/Documents/proj/calendar",
-    "file": "/home/margot/Documents/proj/calendar/src/disk/disk_storage.cpp",
-    "output": "/home/margot/Documents/proj/calendar/build/src/disk/disk_storage.o"
+    "directory": "/home/margot/Documents/proj/calendar2",
+    "file": "/home/margot/Documents/proj/calendar2/src/disk/disk_storage.cpp",
+    "output": "/home/margot/Documents/proj/calendar2/build/src/disk/disk_storage.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-std=c++20",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-Wconversion",
+      "-O2",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "build/src/cli/cli.o",
+      "src/cli/cli.cpp"
+    ],
+    "directory": "/home/margot/Documents/proj/calendar2",
+    "file": "/home/margot/Documents/proj/calendar2/src/cli/cli.cpp",
+    "output": "/home/margot/Documents/proj/calendar2/build/src/cli/cli.o"
   },
   {
     "arguments": [
@@ -185,8 +204,8 @@
       "build/main.o",
       "main.cpp"
     ],
-    "directory": "/home/margot/Documents/proj/calendar",
-    "file": "/home/margot/Documents/proj/calendar/main.cpp",
-    "output": "/home/margot/Documents/proj/calendar/build/main.o"
+    "directory": "/home/margot/Documents/proj/calendar2",
+    "file": "/home/margot/Documents/proj/calendar2/main.cpp",
+    "output": "/home/margot/Documents/proj/calendar2/build/main.o"
   }
 ]

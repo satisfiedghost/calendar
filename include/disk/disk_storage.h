@@ -15,8 +15,8 @@ public:
   DiskStorage(std::string save_file);
   ~DiskStorage();
 
-  std::optional<std::tuple<std::chrono::year_month_day, Events::TodEvent>> load_event();
-  void save(const std::chrono::year_month_day, const Events::TodEvent&);
+  std::optional<Events::TodEvent> load_event();
+  void save(const Events::TodEvent&);
   //void flush();
 
 private:

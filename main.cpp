@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
     switch(cmd) {
       case 'e': {
         auto e = parser.create_event();
-        c.add_event(std::get<0>(e), std::get<1>(e));
+        c.add_event(e);
       }
       break;
       case 'y':

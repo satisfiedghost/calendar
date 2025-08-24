@@ -17,7 +17,7 @@ public:
   EventStore();
   using TodPtr = const TodEvent*;
 
-  void add_event(const std::chrono::year_month_day, TodEvent);
+  void add_event(TodEvent);
   std::optional<std::span<TodPtr>> get_events(const std::chrono::year_month_day);
   std::optional<std::span<TodPtr>> get_events(const std::chrono::year_month);
   std::optional<std::span<TodPtr>> get_events(const std::chrono::year);
@@ -25,7 +25,7 @@ public:
 private:
 
 
-  void update_views(const std::chrono::year_month_day ymd, const TodEvent&);
+  void update_views(const TodEvent&);
 
   std::deque<TodEvent> m_tod_events;
   std::unordered_map<std::chrono::year, std::vector<TodPtr>, Util::YearHash> m_year_view;

@@ -11,7 +11,8 @@ EventStore::EventStore()
   : m_tod_events()
   {}
 
-void EventStore::add_event(const year_month_day ymd, TodEvent event) {
+void EventStore::add_event(TodEvent event) {
+  auto ymd = event.get_ymd();
   if (!ymd.ok()) {
     throw std::domain_error("ymd associated with event is not valid!");
   }
@@ -19,11 +20,13 @@ void EventStore::add_event(const year_month_day ymd, TodEvent event) {
   // move into backing storage and then use a ref to that to index by y/m/d
   m_tod_events.push_back(std::move(event));
   const auto& event_ref = m_tod_events.back();
-  update_views(ymd, event_ref);
+  update_views(event_ref);
 }
 
-void EventStore::update_views(const year_month_day ymd, const TodEvent& e_ref) {
+void EventStore::update_views(const TodEvent& e_ref) {
   TodPtr e_ptr = &e_ref;
+  auto ymd = e_ref.get_ymd();
+
   m_year_view[ymd.year()].push_back(e_ptr);
   m_year_month_view[year_month{ymd.year(), ymd.month()}].push_back(e_ptr);
   m_ymd_view[ymd].push_back(e_ptr);
