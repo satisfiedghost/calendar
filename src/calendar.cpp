@@ -9,10 +9,6 @@ constexpr year MAX_YEAR{2100};
 
 Calendar::Calendar(std::string cal_file)
 : m_disk_storage(cal_file) {
-  for (auto y = MIN_YEAR; y <= MAX_YEAR; y++) {
-    m_years.emplace_back(Year(y));
-  }
-
   // read all events on disk
   while (auto time_and_event = m_disk_storage.load_event()) {
     auto& [time, event] = *time_and_event;
@@ -23,9 +19,9 @@ Calendar::Calendar(std::string cal_file)
 void Calendar::add_event(const std::chrono::year_month_day ymd, const Events::TodEvent& in_event, bool writethrough) {
   // check if this event already exists
   if (auto events = m_event_store.get_events(ymd)) {
-    for (const auto& e : events->get()) {
+    for (const auto& e : *events) {
     // don't insert this if a matching event exists on this day
-      if (e == in_event) {
+      if (*e == in_event) {
         return;
       }
     }
@@ -38,8 +34,8 @@ void Calendar::add_event(const std::chrono::year_month_day ymd, const Events::To
 }
 
 
-std::optional<std::reference_wrapper<const std::vector<Events::TodEvent>>> Calendar::get_events(const year_month_day ymd) {
-  return m_event_store.get_events(ymd);
-}
+//std::optional<std::span<Events::EventStore::TodPtr>> Calendar::get_events(const year_month_day ymd) {
+//  return m_event_store.get_events(ymd);
+//}
 
 }

@@ -28,16 +28,19 @@ int main(int argc, char* argv[]) {
   year_month_day ymd2{2025y, 8_mo, 25d};
   Events::TodEvent e3("stare into the void", 01, 00);
   year_month_day ymd3{1993y, 7_mo, 9d};
+  Events::TodEvent e4("utter ineffable phrases", 9, 00);
+  year_month_day ymd4{2025y, 9_mo, 25d};
 
   c.add_event(ymd1, e1);
   c.add_event(ymd2, e2);
   c.add_event(ymd3, e3);
+  c.add_event(ymd4, e4);
 
-  auto events = c.get_events(ymd3);
+  auto events = c.get_events(std::chrono::year_month{year{2025}, month{8}});
 
   if (events) {
-    for (const auto& e : events->get()) {
-      std::cout << e << std::endl;
+    for (const auto& e : *events) {
+      std::cout << *e << std::endl;
     }
   }
 

@@ -1,6 +1,7 @@
 #include <stdexcept>
 
 #include "events/event_store.h"
+#include "events/tod_event.h"
 
 namespace Events {
 
@@ -10,20 +11,43 @@ EventStore::EventStore()
   : m_tod_events()
   {}
 
-void EventStore::add_event(const year_month_day ymd, const TodEvent& event) {
+void EventStore::add_event(const year_month_day ymd, TodEvent event) {
   if (!ymd.ok()) {
     throw std::domain_error("ymd associated with event is not valid!");
   }
 
-  m_tod_events[ymd].push_back(event);
+  // move into backing storage and then use a ref to that to index by y/m/d
+  m_tod_events.push_back(std::move(event));
+  const auto& event_ref = m_tod_events.back();
+  update_views(ymd, event_ref);
 }
 
-std::optional<std::reference_wrapper<const std::vector<TodEvent>>> EventStore::get_events(const year_month_day ymd) {
-  if (m_tod_events.contains(ymd)) {
-    return std::cref(m_tod_events[ymd]);
-  } else {
-    return std::nullopt;
+void EventStore::update_views(const year_month_day ymd, const TodEvent& e_ref) {
+  TodPtr e_ptr = &e_ref;
+  m_year_view[ymd.year()].push_back(e_ptr);
+  m_year_month_view[year_month{ymd.year(), ymd.month()}].push_back(e_ptr);
+  m_ymd_view[ymd].push_back(e_ptr);
+}
+
+std::optional<std::span<EventStore::TodPtr>> EventStore::get_events(const year_month_day ymd) {
+  if (auto it = m_ymd_view.find(ymd); it != m_ymd_view.end()) {
+    return it->second;
   }
+  return std::nullopt;
+}
+
+std::optional<std::span<EventStore::TodPtr>> EventStore::get_events(const year_month ym) {
+  if (auto it = m_year_month_view.find(ym); it != m_year_month_view.end()) {
+    return it->second;
+  }
+  return std::nullopt;
+}
+
+std::optional<std::span<EventStore::TodPtr>> EventStore::get_events(const year y) {
+  if (auto it = m_year_view.find(y); it != m_year_view.end()) {
+    return it->second;
+  }
+  return std::nullopt;
 }
 
 }

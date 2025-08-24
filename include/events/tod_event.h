@@ -25,6 +25,7 @@ public:
 
   auto operator<=>(const TodEvent&) const = default;
 private:
+  // TODO - this should be ymd aware
   std::chrono::seconds m_tod; // time since midnight
 };
 

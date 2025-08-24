@@ -1,7 +1,7 @@
 #include <chrono>
 #include <optional>
 #include <functional>
-#include <list>
+#include <span>
 
 #include "events/event_store.h"
 #include "events/tod_event.h"
@@ -16,10 +16,11 @@ public:
   Calendar(std::string cal_file);
 
   void add_event(const std::chrono::year_month_day, const Events::TodEvent&, bool writethrough=true);
-  std::optional<std::reference_wrapper<const std::vector<Events::TodEvent>>> get_events(const std::chrono::year_month_day);
+
+  template<typename T>
+  std::optional<std::span<Events::EventStore::TodPtr>> get_events(const T t) { return m_event_store.get_events(t); }
 
 private:
-  std::list<Year> m_years;
   Events::EventStore m_event_store;
   Storage::DiskStorage m_disk_storage;
 };
