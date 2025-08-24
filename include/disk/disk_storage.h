@@ -15,9 +15,11 @@ public:
   DiskStorage(std::string save_file);
   ~DiskStorage();
 
+  // loads events from disk, acts as a generator and will return a nullopt when done
   std::optional<Events::TodEvent> load_event();
+
+  // save an event to disk
   void save(const Events::TodEvent&);
-  //void flush();
 
 private:
   const std::string m_save_file;

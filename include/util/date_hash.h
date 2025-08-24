@@ -3,6 +3,7 @@
 
 namespace Util {
 
+// the STL doesn't provide hash functionality for these by default
 struct YearHash {
   size_t operator()(const std::chrono::year& y) const noexcept {
     return std::hash<int>{}(static_cast<int>(y));

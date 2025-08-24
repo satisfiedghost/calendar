@@ -5,6 +5,7 @@
 #include "disk/disk_storage.h"
 #include "events/tod_event.h"
 
+// we save the calendar events as a TSV
 constexpr char VERSION_TAG[] = "V";
 constexpr char DELIM = '\t';
 constexpr char NEWLINE = '\n';
@@ -39,10 +40,11 @@ DiskStorage::DiskStorage(std::string cal_file)
   : m_save_file(cal_file + ".calendar") 
   , m_temp_file(m_save_file + ".tmp") {
 
+  // if this doesn't exist yet, init an empty save file
   if (!fs::exists(m_save_file)) {
     init_save_file(m_temp_file); // we'll be writing to the tempfile so init it here
     fs::copy_file(m_temp_file, m_save_file, fs::copy_options::overwrite_existing); // as if reading from an empty save file
-  } else {
+  } else { // copy the existing save file to the temp (runtime) file
     fs::copy_file(m_save_file, m_temp_file, fs::copy_options::overwrite_existing);
   }
 
@@ -109,7 +111,5 @@ std::optional<Events::TodEvent> DiskStorage::load_event() {
   return event;
 }
 
-//void DiskStorage::flush() {
-//}
-
 }
+

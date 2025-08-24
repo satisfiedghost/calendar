@@ -10,13 +10,17 @@
 
 namespace Calendar {
 
-
+// primary interaction with the event store and interfacing with the user
 class Calendar {
 public:
   Calendar(std::string cal_file);
 
+  // add an event to the calendar
+  // set writethrough=false to avoid writing to disk
   void add_event(const Events::TodEvent&, bool writethrough=true);
 
+  // get an event span for a given ymd, ym, or y
+  // or nullopt if none are present for the requested date
   template<typename T>
   std::optional<std::span<Events::EventStore::TodPtr>> get_events(const T t) { return m_event_store.get_events(t); }
 

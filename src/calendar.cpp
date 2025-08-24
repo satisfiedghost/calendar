@@ -4,9 +4,6 @@ namespace Calendar {
 
 using namespace std::chrono;
 
-constexpr year MIN_YEAR{1970};
-constexpr year MAX_YEAR{2100};
-
 Calendar::Calendar(std::string cal_file)
 : m_disk_storage(cal_file) {
   // read all events on disk
@@ -31,10 +28,5 @@ void Calendar::add_event(const Events::TodEvent& in_event, bool writethrough) {
   }
   m_event_store.add_event(in_event);
 }
-
-
-//std::optional<std::span<Events::EventStore::TodPtr>> Calendar::get_events(const year_month_day ymd) {
-//  return m_event_store.get_events(ymd);
-//}
 
 }

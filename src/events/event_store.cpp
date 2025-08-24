@@ -27,6 +27,8 @@ void EventStore::update_views(const TodEvent& e_ref) {
   TodPtr e_ptr = &e_ref;
   auto ymd = e_ref.get_ymd();
 
+  // append to the correct span,
+  // unordered_map's [] operator calls the default ctor for the value if not found
   m_year_view[ymd.year()].push_back(e_ptr);
   m_year_month_view[year_month{ymd.year(), ymd.month()}].push_back(e_ptr);
   m_ymd_view[ymd].push_back(e_ptr);

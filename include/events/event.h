@@ -3,6 +3,7 @@
 
 namespace Events {
 
+// generic event class
 class Event {
 public:
   Event(std::string context)

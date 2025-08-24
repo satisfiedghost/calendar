@@ -24,6 +24,7 @@ public:
     , m_sys_days(ymd)
   {}
 
+  // convenience delegating ctors
   TodEvent(std::string context, std::chrono::year_month_day ymd, std::chrono::seconds tod)
     : TodEvent(context, ymd, std::chrono::hh_mm_ss<std::chrono::seconds>(tod))
     {}
@@ -32,10 +33,13 @@ public:
     : TodEvent(context, ymd, std::chrono::seconds(h.count() * 3600 + m.count() * 60))
   {}
 
+  // get the ymd for this event
   const std::chrono::year_month_day get_ymd() const { return std::chrono::year_month_day(m_sys_days); }
 
+  // teach cout how to pretty print an event
   friend std::ostream& operator<<(std::ostream&, const TodEvent&);
 
+  // make these 3 way comparable (helps to check for duplicates)
   auto operator<=>(const TodEvent&) const = default;
 private:
   std::chrono::seconds m_tod; // time since midnight

@@ -3,6 +3,7 @@
 
 namespace DateStrings {
 
+// pretty print any of these chrono objects
 std::string date_to_str(std::chrono::year_month_day);
 std::string year_to_str(std::chrono::year);
 std::string month_to_str(std::chrono::month);
