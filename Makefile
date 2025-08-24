@@ -1,13 +1,15 @@
 CXX := g++
-CXXFLAGS := -std=c++20 -Iinclude -MP -MMD -Wall -Wextra -Werror -Wconversion -O2
+CXXFLAGS := -std=c++20 -MP -MMD -Wall -Wextra -Werror -Wconversion -O2
 
 .PHONY: clean clena all
-
-SRC_DIR := src
+INC_DIRS := include
+SRC_DIRS := src src/events src/ymd
 OBJ_DIR := build
 
+CXXFLAGS += $(addprefix -I,$(INC_DIRS))
+
 # find all .cpp files + main
-SRCS := $(wildcard $(SRC_DIR)/*.cpp) main.cpp
+SRCS := $(foreach d,$(SRC_DIRS),$(wildcard $(d)/*.cpp)) main.cpp
 
 # each TU needs a .o
 # pattern replacement $(VAR:pattern=replacement)

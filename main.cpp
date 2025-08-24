@@ -1,25 +1,28 @@
-#include "day.h"
-#include "event.h"
+#include <chrono>
 #include <vector>
 
+#include "calendar.h"
+#include "events/tod_event.h"
+#include "util/date_strings.h"
+#include "util/chrono_literal_extensions.h"
+
+using namespace std::chrono;
+using namespace std::chrono_literals;
+
 int main() {
-  std::vector<Calendar::Day> days;
+  Calendar::Calendar c;
+  Events::TodEvent e("something to do", 18, 30);
+  year_month_day ymd{2025y, 8_mo, 30d};
 
-  for (size_t i = 1; i <= 31; i++) {
-    days.emplace_back(2025, 1, i);
+  c.add_event(ymd, e);
+
+  auto events = c.get_events(ymd);
+
+  if (events) {
+    for (const auto& e : events->get()) {
+      std::cout << e << std::endl;
+    }
   }
 
-  Events::Event e1("National Bug Day");
-  Events::Event e2("Bumblebee's Birthday");
-  Events::Event e3("Untold Horrors");
-  Events::Event e4("National Bug Day II (Electric Boogaloo)");
-
-  days[3].add_event(e1);
-  days[15].add_event(e2);
-  days[15].add_event(e3);
-  days[21].add_event(e4);
-
-  for (const auto& d : days) {
-    std::cout << d << std::endl << std::endl;
-  }
+  return 0;
 }
