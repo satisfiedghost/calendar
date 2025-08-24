@@ -20,11 +20,21 @@ Calendar::Calendar(std::string cal_file)
   }
 }
 
-void Calendar::add_event(const std::chrono::year_month_day ymd, const Events::TodEvent& e, bool writethrough) {
-  if (writethrough) {
-    m_disk_storage.save(ymd, e);
+void Calendar::add_event(const std::chrono::year_month_day ymd, const Events::TodEvent& in_event, bool writethrough) {
+  // check if this event already exists
+  if (auto events = m_event_store.get_events(ymd)) {
+    for (const auto& e : events->get()) {
+    // don't insert this if a matching event exists on this day
+      if (e == in_event) {
+        return;
+      }
+    }
   }
-  m_event_store.add_event(ymd, e);
+
+  if (writethrough) {
+    m_disk_storage.save(ymd, in_event);
+  }
+  m_event_store.add_event(ymd, in_event);
 }
 
 

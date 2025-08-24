@@ -88,9 +88,10 @@ std::string weekday_to_str(weekday weekday) {
   }
 }
 
-std::string hhmmss_to_str(std::chrono::hh_mm_ss<std::chrono::seconds> hhmmss) {
-  return std::to_string(hhmmss.hours().count()) + ":" +
-         std::to_string(hhmmss.minutes().count()) + ":" + "00";
+std::string hhmmss_to_str(std::chrono::seconds seconds) {
+  std::chrono::hh_mm_ss hms(seconds);
+  return std::to_string(hms.hours().count()) + ":" +
+         std::to_string(hms.minutes().count()) + ":" + "00";
 }
 
 

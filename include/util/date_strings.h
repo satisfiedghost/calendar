@@ -8,6 +8,6 @@ std::string year_to_str(std::chrono::year);
 std::string month_to_str(std::chrono::month);
 std::string day_to_str(std::chrono::day);
 std::string weekday_to_str(std::chrono::weekday);
-std::string hhmmss_to_str(std::chrono::hh_mm_ss<std::chrono::seconds>);
+std::string hhmmss_to_str(std::chrono::seconds);
 
 }

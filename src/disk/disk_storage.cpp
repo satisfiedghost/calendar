@@ -1,3 +1,4 @@
+#include <chrono>
 #include <filesystem>
 #include <sstream>
 #include <tuple>
@@ -73,11 +74,14 @@ DiskStorage::~DiskStorage() {
 
 void DiskStorage::save(const year_month_day ymd, const Events::TodEvent& event) {
   m_outfile << event.m_context << DELIM;
+
   m_outfile << static_cast<int>(ymd.year()) << DELIM;
   m_outfile << static_cast<unsigned int>(ymd.month()) << DELIM;
   m_outfile << static_cast<unsigned int>(ymd.day()) << DELIM;
-  m_outfile << event.m_tod.hours().count() << DELIM;
-  m_outfile << event.m_tod.minutes().count() << DELIM;
+
+  hh_mm_ss hms(event.m_tod);
+  m_outfile << hms.hours().count() << DELIM;
+  m_outfile << hms.minutes().count() << DELIM;
   m_outfile << NEWLINE;
 }
 

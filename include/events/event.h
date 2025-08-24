@@ -13,6 +13,8 @@ public:
 
   virtual void update_context(const std::string& context);
 
+  auto operator<=>(const Event&) const = default;
+
 protected:
   std::string m_context;
 };

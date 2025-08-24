@@ -22,8 +22,10 @@ public:
   }
 
   friend std::ostream& operator<<(std::ostream&, const TodEvent&);
+
+  auto operator<=>(const TodEvent&) const = default;
 private:
-  std::chrono::hh_mm_ss<std::chrono::seconds> m_tod;
+  std::chrono::seconds m_tod; // time since midnight
 };
 
 }
