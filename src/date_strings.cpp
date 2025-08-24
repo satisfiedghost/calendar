@@ -1,3 +1,6 @@
+#include <iomanip>
+#include <sstream>
+
 #include "util/date_strings.h"
 
 namespace DateStrings {
@@ -90,8 +93,11 @@ std::string weekday_to_str(weekday weekday) {
 
 std::string hhmmss_to_str(std::chrono::seconds seconds) {
   std::chrono::hh_mm_ss hms(seconds);
-  return std::to_string(hms.hours().count()) + ":" +
-         std::to_string(hms.minutes().count()) + ":" + "00";
+  std::ostringstream oss;
+  oss << std::setfill('0') << std::setw(2) << hms.hours().count() << ":";
+  oss << std::setfill('0') << std::setw(2) << hms.minutes().count() << ":" << "00";
+
+  return oss.str();
 }
 
 
