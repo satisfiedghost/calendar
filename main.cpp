@@ -36,41 +36,55 @@ int main(int argc, char* argv[]) {
     }
   };
 
-  char cmd;
   int y;
   unsigned int m, d;
-  
-  std::cout << "Enter a command (q for quit, e for create event)" << std::endl;
-  std::cout << "(y for year-search, m for month-search, d for day-search): ";
-  while (std::cin >> cmd && cmd != 'q') {
-    switch(cmd) {
-      case 'e': {
+
+  parser.print_commands();
+
+  auto cont = true;
+  while (cont) {
+    auto cmd = parser.get_user_cmd();
+
+    if (!cmd) {
+      std::cout << "Command not recognized!" << std::endl;
+      continue;
+    }
+
+    switch (*cmd) {
+      case CLI::Commands::QUIT:
+        std::cout << "Quitting." << std::endl;
+        cont = false;
+      break;
+
+      case CLI::Commands::CREATE_EVENT: {
         auto e = parser.create_event();
         c.add_event(e);
       }
       break;
-      case 'y':
-        std::cout << "enter a year (YYYY): ";
-        std::cin >> y;
+      
+      case CLI::Commands::YEAR_SEARCH:
+        CLI::CLIParser::get_user_ints({"Year (YYYY): "}, y);
         print_events(year{y});
       break;
-      case 'm':
-        std::cout << "enter a year month (YYYY MM): ";
-        std::cin >> y >> m;
+      
+      case CLI::Commands::YEAR_MONTH_SEARCH:
+        CLI::CLIParser::get_user_ints({"Year (YYYY): ", "Month (MM): "}, y, m);
         print_events(year_month{year{y}, month{m}});
       break;
-      case'd':
-        std::cout << "enter a year month day (YYYY MM DD): ";
-        std::cin >> y >> m >> d;
+
+      case CLI::Commands::YEAR_MONTH_DAY_SEARCH:
+        CLI::CLIParser::get_user_ints({"Year (YYYY): ", "Month (MM): ", "Day (DD): "}, y, m, d);
         print_events(year_month_day{year{y}, month{m}, day{d}});
       break;
-      default:
-        std::cout << "unknown command: " << cmd << std::endl;
+
+      case CLI::Commands::PRINT_COMMANDS:
+        parser.print_commands();
       break;
 
+      default:
+        std::cout << "Command handler not implemented!" << std::endl;
+      break;
     }
-    std::cout << "Enter a command (q for quit, e for create event)" << std::endl;
-    std::cout << "(y for year-search, m for month-search, d for day-search): ";
   }
 
   return 0;
