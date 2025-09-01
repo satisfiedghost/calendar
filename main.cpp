@@ -22,11 +22,10 @@ int main(int argc, char* argv[]) {
     return -1;
   }
 
-  Calendar::Calendar c{std::string(argv[1])};
-  CLI::CLIParser parser(c);
-
-
-  parser.join();
+  CLI::Display display;
+  Calendar::Calendar calendar{std::string(argv[1])};
+  CLI::CLIParser parser(calendar, display);
+  parser.do_io();
 
   return 0;
 }

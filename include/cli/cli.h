@@ -4,10 +4,11 @@
 #include <chrono>
 #include <optional>
 #include <iostream>
-#include <thread>
+#include <ncursesw/ncurses.h>
 
 #include "calendar.h"
 #include "events/tod_event.h"
+#include "display/display.h"
 
 namespace CLI {
 
@@ -25,17 +26,18 @@ enum class Commands {
 
 class CLIParser {
 public:
-  CLIParser(Calendar::Calendar& calendar);
+  CLIParser(Calendar::Calendar& calendar, Display& display);
   // parse a command from user input
   // returns nullopt if command wasn't understood
   std::optional<Commands> get_user_cmd(std::string);
   // prompt the user to create an event
   std::optional<Events::TodEvent> create_event();
-
-  void join();
-
+  // infinite io loop
+  void do_io();
 private:
-  std::thread m_io_thread;
+  Display& m_display;
+  Calendar::Calendar& m_calendar;
+  WINDOW* m_io_window;
 };
 
 

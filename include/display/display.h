@@ -1,24 +1,30 @@
 #pragma once
 
-#include "cli/cli.h"
 #include <sys/ioctl.h>
+#include <ncursesw/ncurses.h>
 #include <cstddef>
 #include <string>
+#include <vector>
 
 namespace CLI {
+
+class Box; // forward decl
 
 class Display {
 public:
   Display();
-private:
 
-  struct winsize m_ws;
-  size_t m_cli_row;
+  void set_window(WINDOW*);
+
+  void draw_calendar();
+private:
+  WINDOW* m_window;
+  std::vector<Box> m_boxes;
 };
 
 class Box {
 public:
-  Box(size_t x, size_t y, size_t w, size_t h)
+  Box(int x, int y, int w, int h)
     : m_x(x)
     , m_y(y)
     , m_w(w)
@@ -26,29 +32,30 @@ public:
   {}
 
   // draw the box with x, y as the top left coords
-  void draw(bool bold=false) const;
+  void draw(WINDOW* window, bool bold=false) const;
 
   // clear the area on which the box is drawn
-  void clear() const;
+  void clear(WINDOW* window) const;
 private:
-  size_t m_x;
-  size_t m_y;
-  size_t m_w;
-  size_t m_h;
 
-  static const std::string BOX_TOP_R;
-  static const std::string BOX_BOT_L;
-  static const std::string BOX_TOP_L;
-  static const std::string BOX_BOT_R;
-  static const std::string BOX_SIDE_V;
-  static const std::string BOX_SIDE_H;
+  int m_x;
+  int m_y;
+  int m_w;
+  int m_h;
 
-  static const std::string BOX_TOP_R_BOLD;
-  static const std::string BOX_BOT_L_BOLD;
-  static const std::string BOX_TOP_L_BOLD;
-  static const std::string BOX_BOT_R_BOLD;
-  static const std::string BOX_SIDE_V_BOLD;
-  static const std::string BOX_SIDE_H_BOLD;
+  static const char* BOX_TOP_R;
+  static const char* BOX_BOT_L;
+  static const char* BOX_TOP_L;
+  static const char* BOX_BOT_R;
+  static const char* BOX_SIDE_V;
+  static const char* BOX_SIDE_H;
+
+  static const char* BOX_TOP_R_BOLD;
+  static const char* BOX_BOT_L_BOLD;
+  static const char* BOX_TOP_L_BOLD;
+  static const char* BOX_BOT_R_BOLD;
+  static const char* BOX_SIDE_V_BOLD;
+  static const char* BOX_SIDE_H_BOLD;
 };
 
 }

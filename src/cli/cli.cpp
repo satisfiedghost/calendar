@@ -7,7 +7,6 @@
 #include <string>
 #include <string_view>
 #include <vector>
-#include <ncursesw/ncurses.h>
 #include "calendar.h"
 
 #include "cli/cli.h"
@@ -18,6 +17,7 @@ namespace CLI {
 using namespace std::chrono;
 
 static WINDOW* io_window;
+static WINDOW* display_window;
 constexpr int CTRL_U = 21;
 
 static std::string description_prompt = "Description: ";
@@ -69,6 +69,7 @@ static void get_input_line(std::string& input_buffer, const std::string& input_p
     }
     wmove(io_window, getcury(io_window), static_cast<int>(input_prompt.size()));
     wclrtoeol(io_window);
+    box_set(io_window, WACS_VLINE, WACS_HLINE);
     wprintw(io_window, "%s", input_buffer.c_str());
     wrefresh(io_window);
   }
@@ -90,7 +91,7 @@ static bool get_int(T& value, std::string& input_buffer, const std::string& prom
   return true;
 }
 
-static void io_thread(CLIParser& parser, Calendar::Calendar& c) {
+void CLIParser::do_io() {
   std::istringstream input_stream;
 
   werase(io_window);
@@ -99,8 +100,9 @@ static void io_thread(CLIParser& parser, Calendar::Calendar& c) {
 
   auto print_events = [&](auto s) {
     wclrtobot(io_window);
+    box_set(io_window, WACS_VLINE, WACS_HLINE);
     std::ostringstream event_stream;
-    auto events = c.get_events(s);
+    auto events = m_calendar.get_events(s);
 
     if (events) {
       for (const auto& e : *events) {
@@ -118,31 +120,34 @@ static void io_thread(CLIParser& parser, Calendar::Calendar& c) {
   int y;
   unsigned int m, d;
   while (cont) {
+    // calendar draw logic
+    m_display.draw_calendar();
+
     std::string input_buffer;
     input_buffer.clear();
     get_input_line(input_buffer, command_prompt);
 
-    auto cmd = parser.get_user_cmd(input_buffer);
+    auto cmd = get_user_cmd(input_buffer);
     input_buffer.clear();
 
     if (!cmd) {
-      std::cout << "Command not recognized!" << std::endl;
+      wprintw(io_window, "%s\n", "Command not recognized.");
       continue;
     }
 
     switch (*cmd) {
       case CLI::Commands::QUIT:
-        std::cout << "Quitting." << std::endl;
+        wprintw(io_window, "%s\n", "Quitting!");
         cont = false;
       break;
 
       case CLI::Commands::CREATE_EVENT: {
-        auto e = parser.create_event();
+        auto e = create_event();
         if (!e) {
           wprintw(io_window, "%s\n", "Unable to create event!");
           continue;
         }
-        c.add_event(*e);
+        m_calendar.add_event(*e);
       }
       break;
       
@@ -193,6 +198,7 @@ static void io_thread(CLIParser& parser, Calendar::Calendar& c) {
         std::cout << "Command handler not implemented!" << std::endl;
       break;
     }
+
   }
 
   endwin();
@@ -207,23 +213,26 @@ static void create_io_window() {
     delwin(io_window);
   }
 
+  display_window = newwin(h_top, term_w, 0, 0);
   io_window = newwin(h_io, term_w, h_top, 0);
+
 
   scrollok(io_window, true);
   wmove(io_window, 1, 1);
+  box_set(io_window, WACS_VLINE, WACS_HLINE);
   wrefresh(io_window);
 }
 
-CLIParser::CLIParser(Calendar::Calendar& calendar) {
+
+CLIParser::CLIParser(Calendar::Calendar& calendar, Display& display)
+  : m_display(display) 
+  , m_calendar(calendar) {
+  setlocale(LC_ALL, ""); // enable unicode
   initscr();
   keypad(stdscr, true);
   create_io_window();
   noecho();
-  m_io_thread = std::thread(io_thread, std::ref(*this), std::ref(calendar));
-}
-
-void CLIParser::join() {
-  m_io_thread.join();
+  display.set_window(display_window);
 }
 
 std::optional<Commands> CLIParser::get_user_cmd(std::string user_input) {
