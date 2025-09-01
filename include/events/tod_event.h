@@ -20,7 +20,7 @@ public:
 
   TodEvent(std::string context, std::chrono::year_month_day ymd, std::chrono::hh_mm_ss<std::chrono::seconds> hms)
     : Event(context) 
-    , m_tod{std::chrono::seconds{hms.hours().count() * 3600 + hms.minutes().count() + 60}}
+    , m_tod{std::chrono::seconds{hms.hours().count() * 3600 + hms.minutes().count() * 60}}
     , m_sys_days(ymd)
   {}
 

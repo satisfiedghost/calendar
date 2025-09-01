@@ -1,9 +1,10 @@
 CXX := g++
-CXXFLAGS := -std=c++20 -MP -MMD -Wall -Wextra -Werror -Wconversion -O2
+CXXFLAGS := -std=c++20 -MP -MMD -Wall -Wextra -Werror -Wconversion -g
+LDLIBS := -lncursesw
 
 .PHONY: clean clena all
 INC_DIRS := include
-SRC_DIRS := src src/events src/ymd src/disk src/cli
+SRC_DIRS := src src/events src/ymd src/disk src/cli src/display
 OBJ_DIR := build
 
 CXXFLAGS += $(addprefix -I,$(INC_DIRS))
@@ -25,7 +26,7 @@ all: $(TARGET)
 
 # link
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(CXXFLAGS) $^ $(LDLIBS) -o $@
 
 # compile
 $(OBJ_DIR)/%.o: %.cpp

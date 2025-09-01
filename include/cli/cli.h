@@ -1,8 +1,12 @@
+#pragma once
+
 #include <array>
 #include <chrono>
 #include <optional>
 #include <iostream>
+#include <thread>
 
+#include "calendar.h"
 #include "events/tod_event.h"
 
 namespace CLI {
@@ -21,39 +25,17 @@ enum class Commands {
 
 class CLIParser {
 public:
-  // print available commands
-  void print_commands();
+  CLIParser(Calendar::Calendar& calendar);
   // parse a command from user input
   // returns nullopt if command wasn't understood
-  std::optional<Commands> get_user_cmd();
+  std::optional<Commands> get_user_cmd(std::string);
   // prompt the user to create an event
-  Events::TodEvent create_event();
+  std::optional<Events::TodEvent> create_event();
 
-  template<typename I>
-  static void get_user_int(std::string prompt, I& i) {
-    while (true) {
-      std::cout << prompt;
+  void join();
 
-      if (std::cin >> i) {
-        break;
-      } else {
-        std::cout << "Not an integer?" << std::endl;
-        discard_remaining_input();
-      }
-    }
-  }
-
-  //template<class... Ints>
-  //static void get_user_ints(std::string prompt, Ints&... ints) {
-  //  (get_user_int(prompt, ints), ...);
-  //}
-  template<class... Ints>
-  static void get_user_ints(const std::array<std::string, sizeof...(Ints)>& prompts, Ints&... ints) {
-    size_t idx = 0;
-    (get_user_int(prompts[idx++], ints), ...);
-  }
 private:
-  static void discard_remaining_input();
+  std::thread m_io_thread;
 };
 
 
