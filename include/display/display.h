@@ -17,18 +17,32 @@ public:
   void set_window(WINDOW*);
 
   void draw_calendar();
+
+  void select_up();
+
+  void select_down();
+
+  void select_left();
+
+  void select_right();
 private:
   WINDOW* m_window;
   std::vector<Box> m_boxes;
+  size_t m_selected_idx;
+};
+
+struct BoxSettings {
+  int x;
+  int y;
+  int w;
+  int h;
 };
 
 class Box {
 public:
-  Box(int x, int y, int w, int h)
-    : m_x(x)
-    , m_y(y)
-    , m_w(w)
-    , m_h(h)
+  Box(BoxSettings settings, int day)
+    : m_settings(settings)
+    , m_day(day)
   {}
 
   // draw the box with x, y as the top left coords
@@ -38,10 +52,8 @@ public:
   void clear(WINDOW* window) const;
 private:
 
-  int m_x;
-  int m_y;
-  int m_w;
-  int m_h;
+  BoxSettings m_settings;
+  int m_day;
 
   static const char* BOX_TOP_R;
   static const char* BOX_BOT_L;

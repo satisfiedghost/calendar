@@ -10,14 +10,18 @@
 namespace CLI {
 
 enum class Commands {
+  NONE = -1,
   QUIT = 0,
   CREATE_EVENT = 1,
   YEAR_SEARCH = 2,
   YEAR_MONTH_SEARCH = 3,
   YEAR_MONTH_DAY_SEARCH = 4,
   PRINT_COMMANDS = 5,
-  COMMAND_CNT = 6,
-  NONE = 7,
+  MOVE_UP = 6,
+  MOVE_DOWN = 7,
+  MOVE_LEFT = 8,
+  MOVE_RIGHT = 9,
+  USER_COMMAND_CNT = 10,
 };
 
 
@@ -27,7 +31,7 @@ public:
   CLIParser() {}
   // parse a command from user input
   // returns nullopt if command wasn't understood
-  std::optional<Commands> get_user_cmd();
+  std::optional<Commands> get_user_cmd(bool display_prompt);
   // set the window pointers
   void set_windows(WINDOW* io_window_frame, WINDOW* io_window);
   // print a string, verbatim

@@ -33,13 +33,17 @@ static std::string commands =
   "\td[ay]     - Search for all events in a given day.\n"
   "\tc[ommand] - See this list of commands.\n";
 
-static const std::array<std::string, static_cast<size_t>(Commands::COMMAND_CNT)> COMMAND_STR = {
+static const std::array<std::string, static_cast<size_t>(Commands::USER_COMMAND_CNT)> COMMAND_STR = {
   "quit",
   "event",
   "year",
   "month",
   "day",
   "command",
+  "key_up",
+  "key_down",
+  "key_left",
+  "key_right",
 };
 
 static bool matches_prefix(const std::string_view query, const std::string_view target) {
@@ -48,11 +52,25 @@ static bool matches_prefix(const std::string_view query, const std::string_view 
 
 static std::string get_input_line(const std::string& input_prompt, WINDOW* io_window) {
   std::string input_buffer;
-  wprintw(io_window, "%s", input_prompt.c_str());
+  if (!input_prompt.empty()) {
+    wprintw(io_window, "%s\n", input_prompt.c_str());
+  }
 
   int ch = 0;
   while (ch != '\n') {
     ch = wgetch(io_window);
+
+    // TODO - don't hardcode strings here
+    if (ch == KEY_UP) {
+      return "key_up";
+    } else if (ch == KEY_DOWN) {
+      return "key_down";
+    } else if (ch == KEY_LEFT) {
+      return "key_left";
+    } else if (ch == KEY_RIGHT) {
+      return "key_right";
+    }
+
     if (ch == KEY_BACKSPACE || ch == 127 || ch == 8) {
       if (!input_buffer.empty()) {
         input_buffer.pop_back();
@@ -63,9 +81,10 @@ static std::string get_input_line(const std::string& input_prompt, WINDOW* io_wi
       input_buffer.push_back(static_cast<char>(ch));
     }
 
-    wmove(io_window, getcury(io_window), static_cast<int>(input_prompt.size()));
+    wmove(io_window, getcury(io_window), 0);
     wclrtoeol(io_window);
     wprintw(io_window, "%s", input_buffer.c_str());
+    curs_set(1);
     wrefresh(io_window);
   }
 
@@ -149,8 +168,8 @@ void CLIParser::print_cmds() const {
 
 
 
-std::optional<Commands> CLIParser::get_user_cmd() {
-  auto user_input = get_input_line(command_prompt, m_io_window);
+std::optional<Commands> CLIParser::get_user_cmd(bool display_prompt) {
+  auto user_input = get_input_line(display_prompt ? command_prompt : "", m_io_window);
 
   for (size_t i = 0; i < COMMAND_STR.size(); i++) {
     if (matches_prefix(user_input, COMMAND_STR[i])) {
