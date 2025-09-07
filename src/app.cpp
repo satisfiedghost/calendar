@@ -1,5 +1,6 @@
 #include "app.h"
 #include "cli/cli.h"
+#include <thread>
 #include <sstream>
 
 namespace App {
@@ -72,7 +73,8 @@ void Application::run() {
 
     switch(*cmd) {
       case CLI::Commands::QUIT:
-        // TODO - print quit message
+        m_parser.print_strln("Quitting, goodbye!");
+        std::this_thread::sleep_for(std::chrono::seconds(2));
         continue;
       break;
 

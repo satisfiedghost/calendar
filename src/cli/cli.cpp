@@ -1,5 +1,6 @@
 #include <array>
 #include <chrono>
+#include <curses.h>
 #include <stdlib.h>
 #include <string>
 #include <string_view>
@@ -88,10 +89,12 @@ static bool get_int(T& value, const std::string& prompt, WINDOW* io_window) {
 
 void CLIParser::print_str(const std::string& str) {
   wprintw(m_io_window, "%s", str.c_str());
+  wrefresh(m_io_window);
 }
 
 void CLIParser::print_strln(const std::string& str) {
   wprintw(m_io_window, "%s\n", str.c_str());
+  wrefresh(m_io_window);
 }
 
 std::optional<std::chrono::year> CLIParser::get_user_year() {
