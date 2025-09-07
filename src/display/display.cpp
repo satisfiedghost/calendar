@@ -16,19 +16,6 @@ std::string SHOW_CURSOR = ANSI_ESC + "?25h";
 std::string RETURN = "\r";
 std::string ERASE_LINE = ANSI_ESC + "2K";
 
-//const std::string Box::BOX_TOP_R = "┐";
-//const std::string Box::BOX_BOT_L = "└";
-//const std::string Box::BOX_TOP_L = "┌";
-//const std::string Box::BOX_BOT_R = "┘";
-//const std::string Box::BOX_SIDE_V = "│";
-//const std::string Box::BOX_SIDE_H = "─";
-//const std::string Box::BOX_TOP_R_BOLD = "┓";
-//const std::string Box::BOX_BOT_L_BOLD = "┗";
-//const std::string Box::BOX_TOP_L_BOLD = "┏";
-//const std::string Box::BOX_BOT_R_BOLD = "┛";
-//const std::string Box::BOX_SIDE_V_BOLD = "┃";
-//const std::string Box::BOX_SIDE_H_BOLD = "━";
-
 const char* Box::BOX_TOP_R = "┐";
 const char* Box::BOX_BOT_L = "└";
 const char* Box::BOX_TOP_L = "┌";
@@ -41,14 +28,6 @@ const char* Box::BOX_TOP_L_BOLD = "┏";
 const char* Box::BOX_BOT_R_BOLD = "┛";
 const char* Box::BOX_SIDE_V_BOLD = "┃";
 const char* Box::BOX_SIDE_H_BOLD = "━";
-
-//static void goto_row(size_t row) {
-//  std::cout << ANSI_ESC << row << ";" << 1 << "H";
-//}
-//
-//static void goto_xy(size_t x, size_t y) {
-//  std::cout << ANSI_ESC << y << ";" << x << "H";
-//}
 
 void Box::draw(WINDOW* window, bool bold) const {
   //wmove(window, m_x, m_y);
@@ -93,8 +72,8 @@ void Display::draw_calendar() {
   int box_width = box_height * 2;
   wclear(m_window);
 
-  for (int i = 0; i < 7; i++) {
-    for (int j = 0; j < 4; j++) {
+  for (int j = 0; j < 4; j++) {
+    for (int i = 0; i < 7; i++) {
       m_boxes.emplace_back(5 + i * box_width, 5 + j * box_height, box_width, box_height);
     }
   }

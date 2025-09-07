@@ -35,8 +35,10 @@ public:
   // infinite io loop
   void do_io();
 private:
+  void create_io_window();
   Display& m_display;
   Calendar::Calendar& m_calendar;
+  WINDOW* m_io_window_frame;
   WINDOW* m_io_window;
 };
 

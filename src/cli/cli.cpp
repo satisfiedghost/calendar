@@ -1,8 +1,5 @@
 #include <array>
 #include <chrono>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
 #include <stdlib.h>
 #include <string>
 #include <string_view>
@@ -16,7 +13,6 @@ namespace CLI {
 
 using namespace std::chrono;
 
-static WINDOW* io_window;
 static WINDOW* display_window;
 constexpr int CTRL_U = 21;
 
@@ -52,7 +48,7 @@ static bool matches_prefix(const std::string_view query, const std::string_view 
 
 static int term_h, term_w;
 
-static void get_input_line(std::string& input_buffer, const std::string& input_prompt) {
+static void get_input_line(std::string& input_buffer, const std::string& input_prompt, WINDOW* io_window) {
   wprintw(io_window, "%s", input_prompt.c_str());
 
   int ch = 0;
@@ -69,7 +65,6 @@ static void get_input_line(std::string& input_buffer, const std::string& input_p
     }
     wmove(io_window, getcury(io_window), static_cast<int>(input_prompt.size()));
     wclrtoeol(io_window);
-    box_set(io_window, WACS_VLINE, WACS_HLINE);
     wprintw(io_window, "%s", input_buffer.c_str());
     wrefresh(io_window);
   }
@@ -78,9 +73,9 @@ static void get_input_line(std::string& input_buffer, const std::string& input_p
 }
 
 template<typename T>
-static bool get_int(T& value, std::string& input_buffer, const std::string& prompt) {
+static bool get_int(T& value, std::string& input_buffer, const std::string& prompt, WINDOW* io_window) {
   char* strtol_end;
-  get_input_line(input_buffer, prompt);
+  get_input_line(input_buffer, prompt, io_window);
   value = static_cast<T>(strtol(input_buffer.c_str(), &strtol_end, 10));
   if (strtol_end == input_buffer.c_str()) {
     wprintw(io_window, "Invalid year\n");
@@ -94,13 +89,11 @@ static bool get_int(T& value, std::string& input_buffer, const std::string& prom
 void CLIParser::do_io() {
   std::istringstream input_stream;
 
-  werase(io_window);
-  mvwprintw(io_window, getmaxy(io_window) - 1, 0, "%s", commands.c_str());
-  wrefresh(io_window);
+  werase(m_io_window);
+  mvwprintw(m_io_window, getmaxy(m_io_window) - 1, 0, "%s", commands.c_str());
 
   auto print_events = [&](auto s) {
-    wclrtobot(io_window);
-    box_set(io_window, WACS_VLINE, WACS_HLINE);
+    wclrtobot(m_io_window);
     std::ostringstream event_stream;
     auto events = m_calendar.get_events(s);
 
@@ -108,11 +101,11 @@ void CLIParser::do_io() {
       for (const auto& e : *events) {
         event_stream << *e << "\n";
       }
-      wprintw(io_window, "%s\n", event_stream.str().c_str());
-      wrefresh(io_window);
+      wprintw(m_io_window, "%s\n", event_stream.str().c_str());
+      wrefresh(m_io_window);
       event_stream.clear();
     } else {
-      wprintw(io_window, "%s\n", "No events found!");
+      wprintw(m_io_window, "%s\n", "No events found!");
     }
   };
 
@@ -125,26 +118,26 @@ void CLIParser::do_io() {
 
     std::string input_buffer;
     input_buffer.clear();
-    get_input_line(input_buffer, command_prompt);
+    get_input_line(input_buffer, command_prompt, m_io_window);
 
     auto cmd = get_user_cmd(input_buffer);
     input_buffer.clear();
 
     if (!cmd) {
-      wprintw(io_window, "%s\n", "Command not recognized.");
+      wprintw(m_io_window, "%s\n", "Command not recognized.");
       continue;
     }
 
     switch (*cmd) {
       case CLI::Commands::QUIT:
-        wprintw(io_window, "%s\n", "Quitting!");
+        wprintw(m_io_window, "%s\n", "Quitting!");
         cont = false;
       break;
 
       case CLI::Commands::CREATE_EVENT: {
         auto e = create_event();
         if (!e) {
-          wprintw(io_window, "%s\n", "Unable to create event!");
+          wprintw(m_io_window, "%s\n", "Unable to create event!");
           continue;
         }
         m_calendar.add_event(*e);
@@ -152,50 +145,50 @@ void CLIParser::do_io() {
       break;
       
       case CLI::Commands::YEAR_SEARCH:
-        if (!get_int(y, input_buffer, year_prompt)) {
+        if (!get_int(y, input_buffer, year_prompt, m_io_window)) {
           continue;
         }
 
-        wprintw(io_window, "Searching for events in %u.\n", y);
+        wprintw(m_io_window, "Searching for events in %u.\n", y);
         print_events(year{y});
       break;
       
       case CLI::Commands::YEAR_MONTH_SEARCH:
-        if (!get_int(y, input_buffer, year_prompt)) {
+        if (!get_int(y, input_buffer, year_prompt, m_io_window)) {
           continue;
         }
-        if (!get_int(m, input_buffer, month_prompt)) {
+        if (!get_int(m, input_buffer, month_prompt, m_io_window)) {
           continue;
         }
 
-        wprintw(io_window, "Searching for events in %i-%u.\n", m, y);
+        wprintw(m_io_window, "Searching for events in %i-%u.\n", m, y);
         print_events(year_month{year{y}, month{m}});
       break;
 
       case CLI::Commands::YEAR_MONTH_DAY_SEARCH:
-        if (!get_int(y, input_buffer, year_prompt)) {
+        if (!get_int(y, input_buffer, year_prompt, m_io_window)) {
           continue;
         }
-        if (!get_int(m, input_buffer, month_prompt)) {
+        if (!get_int(m, input_buffer, month_prompt, m_io_window)) {
           continue;
         }
-        if (!get_int(d, input_buffer, day_prompt)) {
+        if (!get_int(d, input_buffer, day_prompt, m_io_window)) {
           continue;
         }
 
-        wprintw(io_window, "Searching for events in %i-%i-%u.\n", d, m, y);
+        wprintw(m_io_window, "Searching for events in %i-%i-%u.\n", d, m, y);
         print_events(year_month_day{year{y}, month{m}, day{d}});
       break;
 
       case CLI::Commands::PRINT_COMMANDS:
-        werase(io_window);
-        mvwprintw(io_window, getmaxy(io_window) - 1, 0, "%s", commands.c_str());
-        wprintw(io_window, "%s\n", commands.c_str());
-        wrefresh(io_window);
+        werase(m_io_window);
+        mvwprintw(m_io_window, getmaxy(m_io_window) - 1, 0, "%s", commands.c_str());
+        wprintw(m_io_window, "%s\n", commands.c_str());
+        wrefresh(m_io_window);
       break;
 
       default:
-        std::cout << "Command handler not implemented!" << std::endl;
+        wprintw(m_io_window, "Command handler not implemented!");
       break;
     }
 
@@ -204,23 +197,23 @@ void CLIParser::do_io() {
   endwin();
 }
 
-static void create_io_window() {
+void CLIParser::create_io_window() {
   getmaxyx(stdscr, term_h, term_w);
   int h_top = (term_h * 2) / 3;
   int h_io = term_h - h_top;
 
-  if (io_window) {
-    delwin(io_window);
-  }
-
   display_window = newwin(h_top, term_w, 0, 0);
-  io_window = newwin(h_io, term_w, h_top, 0);
 
+  // Create IO window frame
+  m_io_window_frame = newwin(h_io, term_w, h_top, 0);
+  box_set(m_io_window_frame, WACS_VLINE, WACS_HLINE);
+  wrefresh(m_io_window_frame);
 
-  scrollok(io_window, true);
-  wmove(io_window, 1, 1);
-  box_set(io_window, WACS_VLINE, WACS_HLINE);
-  wrefresh(io_window);
+  // Create inner IO window (where interactive text is displayed)
+  m_io_window = derwin(m_io_window_frame, h_io - 2, term_w - 2, 1, 1);
+  scrollok(m_io_window, true);
+  wmove(m_io_window, 1, 1);
+  wrefresh(m_io_window);
 }
 
 
@@ -251,24 +244,24 @@ std::optional<Events::TodEvent> CLIParser::create_event() {
   int y, m, h;
   unsigned  mo, d;
 
-  get_input_line(description, description_prompt);
-  if (!get_int(y, input_buffer, year_prompt)) {
+  get_input_line(description, description_prompt, m_io_window);
+  if (!get_int(y, input_buffer, year_prompt, m_io_window)) {
     return std::nullopt;
   }
-  if (!get_int(mo, input_buffer, month_prompt)) {
+  if (!get_int(mo, input_buffer, month_prompt, m_io_window)) {
     return std::nullopt;
   }
-  if (!get_int(d, input_buffer, day_prompt)) {
+  if (!get_int(d, input_buffer, day_prompt, m_io_window)) {
     return std::nullopt;
   }
-  if (!get_int(h, input_buffer, hour_prompt)) {
+  if (!get_int(h, input_buffer, hour_prompt, m_io_window)) {
     return std::nullopt;
   }
-  if (!get_int(m, input_buffer, minute_prompt)) {
+  if (!get_int(m, input_buffer, minute_prompt, m_io_window)) {
     return std::nullopt;
   }
 
-  wprintw(io_window, "Creating event for %02i-%02i-%04u, @%02i:%02i\n", d, mo, y, h, m);
+  wprintw(m_io_window, "Creating event for %02i-%02i-%04u, @%02i:%02i\n", d, mo, y, h, m);
   year_month_day ymd{year{y}, month{mo}, day{d}};
   hh_mm_ss<seconds> mmhh{hours{h} + minutes{m}};
 
