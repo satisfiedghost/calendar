@@ -45,7 +45,8 @@ static bool matches_prefix(const std::string_view query, const std::string_view 
   return target.starts_with(query);
 }
 
-static void get_input_line(std::string& input_buffer, const std::string& input_prompt, WINDOW* io_window) {
+static std::string get_input_line(const std::string& input_prompt, WINDOW* io_window) {
+  std::string input_buffer;
   wprintw(io_window, "%s", input_prompt.c_str());
 
   int ch = 0;
@@ -67,12 +68,14 @@ static void get_input_line(std::string& input_buffer, const std::string& input_p
   }
   wprintw(io_window, "\n");
   wrefresh(io_window);
+
+  return input_buffer;
 }
 
 template<typename T>
-static bool get_int(T& value, std::string& input_buffer, const std::string& prompt, WINDOW* io_window) {
+static bool get_int(T& value, const std::string& prompt, WINDOW* io_window) {
   char* strtol_end;
-  get_input_line(input_buffer, prompt, io_window);
+  auto input_buffer = get_input_line(prompt, io_window);
   value = static_cast<T>(strtol(input_buffer.c_str(), &strtol_end, 10));
   if (strtol_end == input_buffer.c_str()) {
     wprintw(io_window, "Invalid year\n");
@@ -83,124 +86,60 @@ static bool get_int(T& value, std::string& input_buffer, const std::string& prom
   return true;
 }
 
-void CLIParser::do_io() {
-  std::istringstream input_stream;
+void CLIParser::print_str(const std::string& str) {
+  wprintw(m_io_window, "%s", str.c_str());
+}
 
-  werase(m_io_window);
-  mvwprintw(m_io_window, getmaxy(m_io_window) - 1, 0, "%s", commands.c_str());
+void CLIParser::print_strln(const std::string& str) {
+  wprintw(m_io_window, "%s\n", str.c_str());
+}
 
-  auto print_events = [&](auto s) {
-    wclrtobot(m_io_window);
-    std::ostringstream event_stream;
-    auto events = m_calendar.get_events(s);
+std::optional<std::chrono::year> CLIParser::get_user_year() {
+  int y;
+  if (!get_int(y, year_prompt, m_io_window)) {
+    return std::nullopt;
+  }
+  return year{y};
+}
 
-    if (events) {
-      for (const auto& e : *events) {
-        event_stream << *e << "\n";
-      }
-      wprintw(m_io_window, "%s\n", event_stream.str().c_str());
-      wrefresh(m_io_window);
-      event_stream.clear();
-    } else {
-      wprintw(m_io_window, "%s\n", "No events found!");
-    }
-  };
+std::optional<std::chrono::year_month> CLIParser::get_user_year_month() {
+  int y;
+  unsigned int m;
+  if (!get_int(y, year_prompt, m_io_window)) {
+    return std::nullopt;
+  }
+  if (!get_int(m, month_prompt, m_io_window)) {
+    return std::nullopt;
+  }
+  return year_month{year{y}, month{m}};
+}
 
-  bool cont = true;
+std::optional<std::chrono::year_month_day> CLIParser::get_user_ymd() {
   int y;
   unsigned int m, d;
-  while (cont) {
-    // calendar draw logic
-    m_display.draw_calendar();
-
-    std::string input_buffer;
-    input_buffer.clear();
-    get_input_line(input_buffer, command_prompt, m_io_window);
-
-    auto cmd = get_user_cmd(input_buffer);
-    input_buffer.clear();
-
-    if (!cmd) {
-      wprintw(m_io_window, "%s\n", "Command not recognized.");
-      continue;
-    }
-
-    switch (*cmd) {
-      case CLI::Commands::QUIT:
-        wprintw(m_io_window, "%s\n", "Quitting!");
-        cont = false;
-      break;
-
-      case CLI::Commands::CREATE_EVENT: {
-        auto e = create_event();
-        if (!e) {
-          wprintw(m_io_window, "%s\n", "Unable to create event!");
-          continue;
-        }
-        m_calendar.add_event(*e);
-      }
-      break;
-      
-      case CLI::Commands::YEAR_SEARCH:
-        if (!get_int(y, input_buffer, year_prompt, m_io_window)) {
-          continue;
-        }
-
-        wprintw(m_io_window, "Searching for events in %u.\n", y);
-        print_events(year{y});
-      break;
-      
-      case CLI::Commands::YEAR_MONTH_SEARCH:
-        if (!get_int(y, input_buffer, year_prompt, m_io_window)) {
-          continue;
-        }
-        if (!get_int(m, input_buffer, month_prompt, m_io_window)) {
-          continue;
-        }
-
-        wprintw(m_io_window, "Searching for events in %i-%u.\n", m, y);
-        print_events(year_month{year{y}, month{m}});
-      break;
-
-      case CLI::Commands::YEAR_MONTH_DAY_SEARCH:
-        if (!get_int(y, input_buffer, year_prompt, m_io_window)) {
-          continue;
-        }
-        if (!get_int(m, input_buffer, month_prompt, m_io_window)) {
-          continue;
-        }
-        if (!get_int(d, input_buffer, day_prompt, m_io_window)) {
-          continue;
-        }
-
-        wprintw(m_io_window, "Searching for events in %i-%i-%u.\n", d, m, y);
-        print_events(year_month_day{year{y}, month{m}, day{d}});
-      break;
-
-      case CLI::Commands::PRINT_COMMANDS:
-        werase(m_io_window);
-        mvwprintw(m_io_window, getmaxy(m_io_window) - 1, 0, "%s", commands.c_str());
-        wprintw(m_io_window, "%s\n", commands.c_str());
-        wrefresh(m_io_window);
-      break;
-
-      default:
-        wprintw(m_io_window, "Command handler not implemented!");
-      break;
-    }
-
+  if (!get_int(y, year_prompt, m_io_window)) {
+    return std::nullopt;
   }
-
-  endwin();
+  if (!get_int(m, month_prompt, m_io_window)) {
+    return std::nullopt;
+  }
+  if (!get_int(d, day_prompt, m_io_window)) {
+    return std::nullopt;
+  }
+  return year_month_day{year{y}, month{m}, day{d}};
 }
 
 
-CLIParser::CLIParser(Calendar::Calendar& calendar, Display& display)
-  : m_display(display) 
-  , m_calendar(calendar) {
+void CLIParser::print_cmds() const {
+  werase(m_io_window);
+  mvwprintw(m_io_window, getmaxy(m_io_window) - 1, 0, "%s", commands.c_str());
+  wrefresh(m_io_window);
 }
 
-std::optional<Commands> CLIParser::get_user_cmd(std::string user_input) {
+
+
+std::optional<Commands> CLIParser::get_user_cmd() {
+  auto user_input = get_input_line(command_prompt, m_io_window);
   for (size_t i = 0; i < COMMAND_STR.size(); i++) {
     if (matches_prefix(user_input, COMMAND_STR[i])) {
       return static_cast<Commands>(i);
@@ -213,28 +152,29 @@ std::optional<Commands> CLIParser::get_user_cmd(std::string user_input) {
 void CLIParser::set_windows(WINDOW *io_window_frame, WINDOW *io_window) {
   m_io_window_frame = io_window_frame;
   m_io_window = io_window;
+  werase(m_io_window);
+  mvwprintw(m_io_window, getmaxy(m_io_window) - 1, 0, "%s", commands.c_str());
 }
 
 std::optional<Events::TodEvent> CLIParser::create_event() {
-  std::string input_buffer;
   std::string description;
   int y, m, h;
   unsigned  mo, d;
 
-  get_input_line(description, description_prompt, m_io_window);
-  if (!get_int(y, input_buffer, year_prompt, m_io_window)) {
+  description = get_input_line(description_prompt, m_io_window);
+  if (!get_int(y, year_prompt, m_io_window)) {
     return std::nullopt;
   }
-  if (!get_int(mo, input_buffer, month_prompt, m_io_window)) {
+  if (!get_int(mo, month_prompt, m_io_window)) {
     return std::nullopt;
   }
-  if (!get_int(d, input_buffer, day_prompt, m_io_window)) {
+  if (!get_int(d, day_prompt, m_io_window)) {
     return std::nullopt;
   }
-  if (!get_int(h, input_buffer, hour_prompt, m_io_window)) {
+  if (!get_int(h, hour_prompt, m_io_window)) {
     return std::nullopt;
   }
-  if (!get_int(m, input_buffer, minute_prompt, m_io_window)) {
+  if (!get_int(m, minute_prompt, m_io_window)) {
     return std::nullopt;
   }
 

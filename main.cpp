@@ -25,9 +25,9 @@ int main(int argc, char* argv[]) {
 
   CLI::Display display;
   Calendar::Calendar calendar{std::string(argv[1])};
-  CLI::CLIParser parser(calendar, display);
+  CLI::CLIParser parser;
 
-  App::Application app(display, parser);
+  App::Application app(display, parser, calendar);
   app.run();
 
   return 0;
