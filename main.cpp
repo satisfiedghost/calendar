@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "app.h"
 #include "calendar.h"
 #include "cli/cli.h"
 #include "display/display.h"
@@ -25,7 +26,9 @@ int main(int argc, char* argv[]) {
   CLI::Display display;
   Calendar::Calendar calendar{std::string(argv[1])};
   CLI::CLIParser parser(calendar, display);
-  parser.do_io();
+
+  App::Application app(display, parser);
+  app.run();
 
   return 0;
 }

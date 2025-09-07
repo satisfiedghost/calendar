@@ -34,8 +34,9 @@ public:
   std::optional<Events::TodEvent> create_event();
   // infinite io loop
   void do_io();
+  // set the windows
+  void set_windows(WINDOW* io_window_frame, WINDOW* io_window);
 private:
-  void create_io_window();
   Display& m_display;
   Calendar::Calendar& m_calendar;
   WINDOW* m_io_window_frame;

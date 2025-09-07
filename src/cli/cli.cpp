@@ -13,7 +13,6 @@ namespace CLI {
 
 using namespace std::chrono;
 
-static WINDOW* display_window;
 constexpr int CTRL_U = 21;
 
 static std::string description_prompt = "Description: ";
@@ -45,8 +44,6 @@ static const std::array<std::string, static_cast<size_t>(Commands::COMMAND_CNT)>
 static bool matches_prefix(const std::string_view query, const std::string_view target) {
   return target.starts_with(query);
 }
-
-static int term_h, term_w;
 
 static void get_input_line(std::string& input_buffer, const std::string& input_prompt, WINDOW* io_window) {
   wprintw(io_window, "%s", input_prompt.c_str());
@@ -197,35 +194,10 @@ void CLIParser::do_io() {
   endwin();
 }
 
-void CLIParser::create_io_window() {
-  getmaxyx(stdscr, term_h, term_w);
-  int h_top = (term_h * 2) / 3;
-  int h_io = term_h - h_top;
-
-  display_window = newwin(h_top, term_w, 0, 0);
-
-  // Create IO window frame
-  m_io_window_frame = newwin(h_io, term_w, h_top, 0);
-  box_set(m_io_window_frame, WACS_VLINE, WACS_HLINE);
-  wrefresh(m_io_window_frame);
-
-  // Create inner IO window (where interactive text is displayed)
-  m_io_window = derwin(m_io_window_frame, h_io - 2, term_w - 2, 1, 1);
-  scrollok(m_io_window, true);
-  wmove(m_io_window, 1, 1);
-  wrefresh(m_io_window);
-}
-
 
 CLIParser::CLIParser(Calendar::Calendar& calendar, Display& display)
   : m_display(display) 
   , m_calendar(calendar) {
-  setlocale(LC_ALL, ""); // enable unicode
-  initscr();
-  keypad(stdscr, true);
-  create_io_window();
-  noecho();
-  display.set_window(display_window);
 }
 
 std::optional<Commands> CLIParser::get_user_cmd(std::string user_input) {
@@ -236,6 +208,11 @@ std::optional<Commands> CLIParser::get_user_cmd(std::string user_input) {
   }
 
   return std::nullopt;
+}
+
+void CLIParser::set_windows(WINDOW *io_window_frame, WINDOW *io_window) {
+  m_io_window_frame = io_window_frame;
+  m_io_window = io_window;
 }
 
 std::optional<Events::TodEvent> CLIParser::create_event() {
