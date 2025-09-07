@@ -62,11 +62,13 @@ static std::string get_input_line(const std::string& input_prompt, WINDOW* io_wi
     } else if (ch >= 32 && ch <= 127) { // printable ascii
       input_buffer.push_back(static_cast<char>(ch));
     }
+
     wmove(io_window, getcury(io_window), static_cast<int>(input_prompt.size()));
     wclrtoeol(io_window);
     wprintw(io_window, "%s", input_buffer.c_str());
     wrefresh(io_window);
   }
+
   wprintw(io_window, "\n");
   wrefresh(io_window);
 
@@ -77,12 +79,15 @@ template<typename T>
 static bool get_int(T& value, const std::string& prompt, WINDOW* io_window) {
   char* strtol_end;
   auto input_buffer = get_input_line(prompt, io_window);
+
   value = static_cast<T>(strtol(input_buffer.c_str(), &strtol_end, 10));
+
   if (strtol_end == input_buffer.c_str()) {
     wprintw(io_window, "Invalid year\n");
     wrefresh(io_window);
     return false;
   }
+
   input_buffer.clear();
   return true;
 }
@@ -99,6 +104,7 @@ void CLIParser::print_strln(const std::string& str) {
 
 std::optional<std::chrono::year> CLIParser::get_user_year() {
   int y;
+
   if (!get_int(y, year_prompt, m_io_window)) {
     return std::nullopt;
   }
@@ -108,6 +114,7 @@ std::optional<std::chrono::year> CLIParser::get_user_year() {
 std::optional<std::chrono::year_month> CLIParser::get_user_year_month() {
   int y;
   unsigned int m;
+
   if (!get_int(y, year_prompt, m_io_window)) {
     return std::nullopt;
   }
@@ -120,6 +127,7 @@ std::optional<std::chrono::year_month> CLIParser::get_user_year_month() {
 std::optional<std::chrono::year_month_day> CLIParser::get_user_ymd() {
   int y;
   unsigned int m, d;
+
   if (!get_int(y, year_prompt, m_io_window)) {
     return std::nullopt;
   }
@@ -143,6 +151,7 @@ void CLIParser::print_cmds() const {
 
 std::optional<Commands> CLIParser::get_user_cmd() {
   auto user_input = get_input_line(command_prompt, m_io_window);
+
   for (size_t i = 0; i < COMMAND_STR.size(); i++) {
     if (matches_prefix(user_input, COMMAND_STR[i])) {
       return static_cast<Commands>(i);
