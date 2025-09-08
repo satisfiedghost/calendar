@@ -97,10 +97,10 @@ void Display::draw_calendar() {
   curs_set(0);
   // find box dimensions (5 rows of 7 each)
   int h, w;
-  getmaxyx(m_window, h, w);
+  getmaxyx(m_display_window, h, w);
   int box_height = h / 6;
   int box_width = box_height * 2;
-  wclear(m_window);
+  wclear(m_display_window);
 
   // TODO - no, this is bad
   if (m_boxes.empty()) {
@@ -112,16 +112,17 @@ void Display::draw_calendar() {
   }
 
   for (auto& box : m_boxes) {
-    box.draw(m_window, false);
+    box.draw(m_display_window, false);
   }
-  m_boxes[m_selected_idx].draw(m_window, true);
+  m_boxes[m_selected_idx].draw(m_display_window, true);
 
 
-  wrefresh(m_window);
+  wrefresh(m_display_window);
 }
 
-void Display::set_window(WINDOW * window) {
-  m_window = window;
+void Display::set_windows(WINDOW * display_window, WINDOW* info_window) {
+  m_display_window = display_window;
+  m_info_window = info_window;
 }
 
 Display::Display(const Calendar::Calendar& calendar)

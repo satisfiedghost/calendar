@@ -50,7 +50,7 @@ Application::Application(CLI::Display& display, CLI::CLIParser& parser, Calendar
 
   keypad(m_io_window, true);
   m_parser.set_windows(m_io_window_frame, m_io_window);
-  m_display.set_window(m_display_window);
+  m_display.set_windows(m_display_window, m_info_window);
 }
 
 Application::~Application() {
