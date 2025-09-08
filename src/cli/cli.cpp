@@ -129,7 +129,14 @@ std::optional<std::chrono::year> CLIParser::get_user_year() {
   if (!get_int(y, year_prompt, m_io_window)) {
     return std::nullopt;
   }
-  return year{y};
+
+  year user_year{y};
+
+  if (!user_year.ok()) {
+    return std::nullopt;
+  }
+
+  return user_year;
 }
 
 std::optional<std::chrono::year_month> CLIParser::get_user_year_month() {
@@ -142,7 +149,14 @@ std::optional<std::chrono::year_month> CLIParser::get_user_year_month() {
   if (!get_int(m, month_prompt, m_io_window)) {
     return std::nullopt;
   }
-  return year_month{year{y}, month{m}};
+
+  year_month user_year_month{year{y}, month{m}};
+
+  if (!user_year_month.ok()) {
+    return std::nullopt;
+  }
+  
+  return user_year_month;
 }
 
 std::optional<std::chrono::year_month_day> CLIParser::get_user_ymd() {
@@ -158,7 +172,14 @@ std::optional<std::chrono::year_month_day> CLIParser::get_user_ymd() {
   if (!get_int(d, day_prompt, m_io_window)) {
     return std::nullopt;
   }
-  return year_month_day{year{y}, month{m}, day{d}};
+
+  year_month_day user_ymd{year{y}, month{m}, day{d}};
+
+  if (!user_ymd.ok()) {
+    return std::nullopt;
+  }
+
+  return user_ymd;
 }
 
 
