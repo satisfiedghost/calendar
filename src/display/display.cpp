@@ -95,14 +95,24 @@ void Display::select_right() {
 }
 
 void Display::draw_calendar(std::chrono::year year, std::chrono::month month) {
+  //constexpr unsigned int box_x_offset = 5;
+
+  // Month, Year + hrule + 1 line
+  constexpr unsigned int box_y_offset = 3;
+
   curs_set(0);
   // find box dimensions (5 rows of 7 each)
-  unsigned int h, w;
-  getmaxyx(m_display_window, h, w);
+  unsigned int term_h, term_w;
+  getmaxyx(m_display_window, term_h, term_w);
 
-  unsigned int box_height = h / 6;
+  // TODO - what if terminal aspect ratio is not wide?
+  unsigned int box_height = (term_h - box_y_offset) / 5;
   unsigned int box_width = box_height * 2;
   wclear(m_display_window);
+
+  // we want to center the calendar in this window
+  auto total_calendar_width = box_width * 7;
+  auto box_x_offset = (term_w - total_calendar_width) / 2;
 
   mvwprintw(m_display_window, 0, 0, "%s, %u", DateStrings::month_to_str(month).c_str(), static_cast<int>(year));
   mvwhline_set(m_display_window, 1, 0, WACS_HLINE, getmaxx(m_display_window));
@@ -110,7 +120,8 @@ void Display::draw_calendar(std::chrono::year year, std::chrono::month month) {
   for (unsigned int i = 1; i < 8; i++) {
     auto weekday = std::chrono::weekday{i};
 
-    mvwprintw(m_display_window, 4, static_cast<int>(5 + (i - 1) * box_width), "%s", DateStrings::weekday_to_str(weekday).c_str());
+    // draw days of week 1 line above calendar boxes
+    mvwprintw(m_display_window, box_y_offset - 1, static_cast<int>(box_x_offset + (i - 1) * box_width), "%s", DateStrings::weekday_to_str(weekday).c_str());
   }
 
   if (year != m_displayed_year or month != m_displayed_month) {
@@ -126,8 +137,12 @@ void Display::draw_calendar(std::chrono::year year, std::chrono::month month) {
           continue;
         } else if (day > days_in_month) {
           goto done;
-        }
-        m_boxes.emplace_back(BoxSettings{5 + i * box_width, 5 + j * box_height, box_width, box_height}, (i + j * 7 + 1) - weekday_start + 1);
+        } 
+        auto day_of_week = (i + j * 7 + 1) - weekday_start + 1;
+        auto box_x_start = box_x_offset + i * box_width;
+        auto box_y_start = box_y_offset + j * box_height;
+
+        m_boxes.emplace_back(BoxSettings{box_x_start, box_y_start, box_width, box_height}, day_of_week);
       }
     }
   }

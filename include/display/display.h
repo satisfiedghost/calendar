@@ -46,7 +46,7 @@ struct BoxSettings {
 
 class Box {
 public:
-  Box(BoxSettings settings, int day)
+  Box(BoxSettings settings, unsigned int day)
     : m_settings(settings)
     , m_day(day)
   {}
@@ -59,7 +59,7 @@ public:
 private:
 
   BoxSettings m_settings;
-  int m_day;
+  unsigned int m_day;
 
   static const char* BOX_TOP_R;
   static const char* BOX_BOT_L;
