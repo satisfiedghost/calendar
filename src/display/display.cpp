@@ -115,6 +115,7 @@ void Display::draw_calendar(std::chrono::year year, std::chrono::month month) {
 
   if (year != m_displayed_year or month != m_displayed_month) {
     m_boxes.clear();
+    m_selected_idx = 1; // always default to 1 to prevent out of bounds when switching months
     unsigned int days_in_month = static_cast<unsigned int>((year/month/std::chrono::last).day());
     unsigned int weekday_start = std::chrono::weekday{std::chrono::sys_days{year/month/1}}.iso_encoding();
 
