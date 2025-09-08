@@ -1,5 +1,6 @@
 #include "app.h"
 #include "cli/cli.h"
+#include <chrono>
 #include <thread>
 #include <sstream>
 
@@ -68,9 +69,12 @@ void Application::run() {
   std::optional<CLI::Commands> cmd = CLI::Commands::NONE;
   bool display_prompt = true;
 
-  // TODO - default to current month
-  std::chrono::year display_year{2025};
-  std::chrono::month display_month{9};
+  // get the current time and display the current month as the default view
+  const auto now = std::chrono::system_clock::now();
+  const auto dp = std::chrono::floor<std::chrono::days>(now);
+  const std::chrono::year_month_day current_ymd{dp};
+  std::chrono::year display_year = current_ymd.year();
+  std::chrono::month display_month = current_ymd.month();
 
   auto print_events = [&](auto time_search) {
     std::ostringstream event_stream;
