@@ -107,6 +107,12 @@ void Display::draw_calendar(std::chrono::year year, std::chrono::month month) {
   mvwprintw(m_display_window, 0, 0, "%s, %u", DateStrings::month_to_str(month).c_str(), static_cast<int>(year));
   mvwhline_set(m_display_window, 1, 0, WACS_HLINE, getmaxx(m_display_window));
 
+  for (unsigned int i = 1; i < 8; i++) {
+    auto weekday = std::chrono::weekday{i};
+
+    mvwprintw(m_display_window, 4, static_cast<int>(5 + (i - 1) * box_width), "%s", DateStrings::weekday_to_str(weekday).c_str());
+  }
+
   if (year != m_displayed_year or month != m_displayed_month) {
     m_boxes.clear();
     unsigned int days_in_month = static_cast<unsigned int>((year/month/std::chrono::last).day());
