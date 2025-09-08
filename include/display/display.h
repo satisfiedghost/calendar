@@ -1,6 +1,7 @@
 #pragma once
 
 #include "calendar.h"
+#include <chrono>
 #include <sys/ioctl.h>
 #include <ncursesw/ncurses.h>
 #include <cstddef>
@@ -17,7 +18,7 @@ public:
 
   void set_windows(WINDOW*, WINDOW*);
 
-  void draw_calendar();
+  void draw_calendar(std::chrono::year, std::chrono::month);
 
   void select_up();
 
@@ -32,13 +33,15 @@ private:
   std::vector<Box> m_boxes;
   size_t m_selected_idx;
   const Calendar::Calendar& m_calendar;
+  std::chrono::year m_displayed_year;
+  std::chrono::month m_displayed_month;
 };
 
 struct BoxSettings {
-  int x;
-  int y;
-  int w;
-  int h;
+  unsigned int x;
+  unsigned int y;
+  unsigned int w;
+  unsigned int h;
 };
 
 class Box {

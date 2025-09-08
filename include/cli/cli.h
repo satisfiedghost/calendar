@@ -21,7 +21,8 @@ enum class Commands {
   MOVE_DOWN = 7,
   MOVE_LEFT = 8,
   MOVE_RIGHT = 9,
-  USER_COMMAND_CNT = 10,
+  CHANGE_MONTH = 10,
+  USER_COMMAND_CNT = 11,
 };
 
 

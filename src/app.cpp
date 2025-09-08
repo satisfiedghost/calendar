@@ -68,6 +68,10 @@ void Application::run() {
   std::optional<CLI::Commands> cmd = CLI::Commands::NONE;
   bool display_prompt = true;
 
+  // TODO - default to current month
+  std::chrono::year display_year{2025};
+  std::chrono::month display_month{9};
+
   auto print_events = [&](auto time_search) {
     std::ostringstream event_stream;
     auto events = m_calendar.get_events(time_search);
@@ -84,7 +88,7 @@ void Application::run() {
   };
 
   while(cmd != CLI::Commands::QUIT) {
-    m_display.draw_calendar();
+    m_display.draw_calendar(display_year, display_month);
     cmd = m_parser.get_user_cmd(display_prompt);
 
     if (!cmd) {
@@ -175,6 +179,17 @@ void Application::run() {
       case CLI::Commands::MOVE_RIGHT:
         display_prompt = false;
         m_display.select_right();
+      break;
+
+      case CLI::Commands::CHANGE_MONTH: {
+        auto year_month = m_parser.get_user_year_month();
+        if (!year_month) {
+          m_parser.print_strln("Invalid year or month.");
+          continue;
+        }
+        display_year = (*year_month).year();
+        display_month = (*year_month).month();
+      }
       break;
 
       default:

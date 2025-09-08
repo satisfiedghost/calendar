@@ -31,7 +31,8 @@ static std::string commands =
   "\ty[ear]    - Search for all events in a year.\n"
   "\tm[onth]   - Search for all events in a month.\n"
   "\td[ay]     - Search for all events in a given day.\n"
-  "\tc[ommand] - See this list of commands.\n";
+  "\th[elp]    - See this list of commands.\n"
+  "\tc[hange]  - Change the displayed month.\n";
 
 static const std::array<std::string, static_cast<size_t>(Commands::USER_COMMAND_CNT)> COMMAND_STR = {
   "quit",
@@ -39,11 +40,12 @@ static const std::array<std::string, static_cast<size_t>(Commands::USER_COMMAND_
   "year",
   "month",
   "day",
-  "command",
+  "help",
   "key_up",
   "key_down",
   "key_left",
   "key_right",
+  "change",
 };
 
 static bool matches_prefix(const std::string_view query, const std::string_view target) {
