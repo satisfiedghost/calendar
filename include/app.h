@@ -20,7 +20,10 @@ CLI::CLIParser& m_parser;
 Calendar::Calendar& m_calendar;
 WINDOW* m_io_window_frame;
 WINDOW* m_io_window;
+WINDOW* m_display_window_frame;
 WINDOW* m_display_window;
+WINDOW* m_info_window_frame;
+WINDOW* m_info_window;
 };
 
 }

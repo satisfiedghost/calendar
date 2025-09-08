@@ -117,7 +117,6 @@ void Display::draw_calendar() {
   m_boxes[m_selected_idx].draw(m_window, true);
 
 
-  box_set(m_window, WACS_VLINE, WACS_HLINE);
   wrefresh(m_window);
 }
 
