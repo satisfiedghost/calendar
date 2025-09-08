@@ -23,8 +23,8 @@ int main(int argc, char* argv[]) {
     return -1;
   }
 
-  CLI::Display display;
   Calendar::Calendar calendar{std::string(argv[1])};
+  CLI::Display display(calendar);
   CLI::CLIParser parser;
 
   App::Application app(display, parser, calendar);

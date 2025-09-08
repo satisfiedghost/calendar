@@ -24,7 +24,7 @@ public:
   // get an event span for a given ymd, ym, or y
   // or nullopt if none are present for the requested date
   template<typename T>
-  std::optional<std::span<Events::EventStore::TodPtr>> get_events(const T t) { return m_event_store.get_events(t); }
+  const std::optional<std::span<const Events::EventStore::TodPtr>> get_events(const T t) const { return m_event_store.get_events(t); }
 
 private:
   Events::EventStore m_event_store;

@@ -34,23 +34,28 @@ void EventStore::update_views(const TodEvent& e_ref) {
   m_ymd_view[ymd].push_back(e_ptr);
 }
 
-std::optional<std::span<EventStore::TodPtr>> EventStore::get_events(const year_month_day ymd) {
+using Span = std::span<const EventStore::TodPtr>;
+
+const std::optional<Span> EventStore::get_events(const year_month_day ymd) const {
   if (auto it = m_ymd_view.find(ymd); it != m_ymd_view.end()) {
-    return it->second;
+    const auto& vec = it->second;
+    return Span(vec.data(), vec.size());
   }
   return std::nullopt;
 }
 
-std::optional<std::span<EventStore::TodPtr>> EventStore::get_events(const year_month ym) {
+const std::optional<Span> EventStore::get_events(const year_month ym) const {
   if (auto it = m_year_month_view.find(ym); it != m_year_month_view.end()) {
-    return it->second;
+    const auto& vec = it->second;
+    return Span(vec.data(), vec.size());
   }
   return std::nullopt;
 }
 
-std::optional<std::span<EventStore::TodPtr>> EventStore::get_events(const year y) {
+const std::optional<Span> EventStore::get_events(const year y) const {
   if (auto it = m_year_view.find(y); it != m_year_view.end()) {
-    return it->second;
+    const auto& vec = it->second;
+    return Span(vec.data(), vec.size());
   }
   return std::nullopt;
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "calendar.h"
 #include <sys/ioctl.h>
 #include <ncursesw/ncurses.h>
 #include <cstddef>
@@ -12,7 +13,7 @@ class Box; // forward decl
 
 class Display {
 public:
-  Display();
+  Display(const Calendar::Calendar&);
 
   void set_window(WINDOW*);
 
@@ -29,6 +30,7 @@ private:
   WINDOW* m_window;
   std::vector<Box> m_boxes;
   size_t m_selected_idx;
+  const Calendar::Calendar& m_calendar;
 };
 
 struct BoxSettings {

@@ -124,8 +124,9 @@ void Display::set_window(WINDOW * window) {
   m_window = window;
 }
 
-Display::Display()
-  : m_selected_idx(0) {}
+Display::Display(const Calendar::Calendar& calendar)
+  : m_selected_idx(0) 
+  , m_calendar(calendar){}
 
 }
 

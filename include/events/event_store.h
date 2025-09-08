@@ -24,9 +24,9 @@ public:
   void add_event(TodEvent);
 
   // get views of events by ymd, ym, and y
-  std::optional<std::span<TodPtr>> get_events(const std::chrono::year_month_day);
-  std::optional<std::span<TodPtr>> get_events(const std::chrono::year_month);
-  std::optional<std::span<TodPtr>> get_events(const std::chrono::year);
+  const std::optional<std::span<const TodPtr>> get_events(const std::chrono::year_month_day) const;
+  const std::optional<std::span<const TodPtr>> get_events(const std::chrono::year_month) const;
+  const std::optional<std::span<const TodPtr>> get_events(const std::chrono::year) const;
 
 private:
 
