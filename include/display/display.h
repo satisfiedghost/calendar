@@ -28,6 +28,8 @@ public:
 
   void select_right();
 private:
+  void draw_info_window();
+
   WINDOW* m_display_window;
   WINDOW* m_info_window;
   std::vector<Box> m_boxes;

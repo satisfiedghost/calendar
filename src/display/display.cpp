@@ -156,6 +156,31 @@ void Display::draw_calendar(std::chrono::year year, std::chrono::month month) {
   m_displayed_year = year;
   m_displayed_month = month;
   wrefresh(m_display_window);
+
+  draw_info_window();
+}
+
+void Display::draw_info_window() {
+  // this is the selected ymd
+  auto ymd = std::chrono::year_month_day{m_displayed_year,
+                                         m_displayed_month,
+                                         std::chrono::day{static_cast<unsigned int>(m_selected_idx) + 1}};
+
+  wclear(m_info_window);
+
+  auto events = m_calendar.get_events(ymd);
+
+  if (!events) {
+    mvwprintw(m_info_window, 0, 0, "No events found.");
+  } else {
+    std::ostringstream event_stream;
+    for (const auto& event : *events) {
+      event_stream << *event << "\n";
+    }
+    mvwprintw(m_info_window, 0, 0, "%s", event_stream.str().c_str());
+  }
+
+  wrefresh(m_info_window);
 }
 
 void Display::set_windows(WINDOW * display_window, WINDOW* info_window) {
