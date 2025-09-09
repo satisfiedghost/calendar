@@ -22,6 +22,7 @@ public:
     : Event(context) 
     , m_tod{std::chrono::seconds{hms.hours().count() * 3600 + hms.minutes().count() * 60}}
     , m_sys_days(ymd)
+    , m_deleted(false)
   {}
 
   // convenience delegating ctors
@@ -43,9 +44,12 @@ public:
   auto operator<=>(const TodEvent&) const = default;
 
   const std::chrono::seconds get_tod() const { return m_tod; }
+
+  bool is_deleted() const { return m_deleted; }
 private:
   std::chrono::seconds m_tod; // time since midnight
   std::chrono::sys_days m_sys_days;
+  bool m_deleted;
 };
 
 }
