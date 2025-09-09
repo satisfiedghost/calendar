@@ -10,9 +10,9 @@ using namespace std::chrono;
 
 std::ostream& operator<<(std::ostream& os, const TodEvent& e) {
   year_month_day ymd(e.m_sys_days);
-  os << e.m_context << std::endl;
-  os << "\t" << DateStrings::date_to_str(ymd);
-  os << "\t@ " << DateStrings::hhmmss_to_str(e.m_tod);
+  os << DateStrings::date_to_str(ymd);
+  os << " @ " << DateStrings::hhmmss_to_str(e.m_tod) << std::endl;
+  os << "\t" << e.m_context << std::endl;
   return os;
 }
 
