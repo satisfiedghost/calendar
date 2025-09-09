@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <curses.h>
 #include <iostream>
 #include <stdexcept>
@@ -5,6 +6,7 @@
 #include <vector>
 
 #include "display/display.h"
+#include "events/tod_event.h"
 #include "util/date_strings.h"
 
 namespace CLI {
@@ -173,8 +175,15 @@ void Display::draw_info_window() {
   if (!events) {
     mvwprintw(m_info_window, 0, 0, "No events found.");
   } else {
+    std::vector<const Events::TodEvent*> sorted_events((*events).begin(), (*events).end());
+
+    std::sort(sorted_events.begin(), sorted_events.end(),
+        [](const auto& a, const auto& b) {
+          return (*a).get_tod() < (*b).get_tod();
+        });
+
     std::ostringstream event_stream;
-    for (const auto& event : *events) {
+    for (const auto& event : sorted_events) {
       event_stream << *event << "\n";
     }
     mvwprintw(m_info_window, 0, 0, "%s", event_stream.str().c_str());

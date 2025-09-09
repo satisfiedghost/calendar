@@ -22,6 +22,7 @@ Application::Application(CLI::Display& display, CLI::CLIParser& parser, Calendar
   int w_display = (term_w * 2) / 5;
   int w_info = term_w - w_display;
 
+
   // Create display window frame
   m_display_window_frame = newwin(h_top, w_display, 0, 0);
   box_set(m_display_window_frame, WACS_VLINE, WACS_HLINE);
@@ -31,12 +32,12 @@ Application::Application(CLI::Display& display, CLI::CLIParser& parser, Calendar
   m_display_window = derwin(m_display_window_frame, h_top - 2, w_display - 2, 1, 1);
 
   // Create info window frame
-  m_info_window_frame = newwin(h_top, w_info, 0, w_display);
+  m_info_window_frame = newwin(h_top, w_info - 1, 0, w_display + 1);
   box_set(m_info_window_frame, WACS_VLINE, WACS_HLINE);
   wrefresh(m_info_window_frame);
 
   // Create info window (where info on the selected day is displayed)
-  m_info_window = derwin(m_info_window_frame, h_top - 2, w_info - 2, 1, 1);
+  m_info_window = derwin(m_info_window_frame, h_top - 2, w_info - 3, 1, 1);
 
   // Create IO window frame
   m_io_window_frame = newwin(h_io, term_w, h_top, 0);

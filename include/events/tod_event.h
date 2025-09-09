@@ -41,6 +41,8 @@ public:
 
   // make these 3 way comparable (helps to check for duplicates)
   auto operator<=>(const TodEvent&) const = default;
+
+  const std::chrono::seconds get_tod() const { return m_tod; }
 private:
   std::chrono::seconds m_tod; // time since midnight
   std::chrono::sys_days m_sys_days;
