@@ -18,12 +18,12 @@ std::string year_to_str(year year) {
   return std::to_string(static_cast<int>(year));
 }
 
-std::string month_to_str(month month) {
+std::string month_to_str(month month, bool shorten) {
   switch(static_cast<unsigned int>(month)) {
     case 1:
-      return "January";
+      return shorten ? "Jan" : "January";
     case 2:
-      return "February";
+      return shorten ? "Feb" : "February";
     case 3:
       return "March";
     case 4:
@@ -35,15 +35,15 @@ std::string month_to_str(month month) {
     case 7:
       return "July";
     case 8:
-      return "August";
+      return shorten ? "Aug" : "August";
     case 9:
-      return "September";
+      return shorten ? "Sept" : "September";
     case 10:
-      return "October";
+      return shorten ? "Oct" : "October";
     case 11:
-      return "November";
+      return shorten ? "Nov" : "November";
     case 12:
-      return "December";
+      return shorten ? "Dec" : "December";
     default:
       return "???";
   }
@@ -70,22 +70,22 @@ std::string day_to_str(day day) {
   }
 }
 
-std::string weekday_to_str(weekday weekday) {
+std::string weekday_to_str(weekday weekday, bool shorten) {
   switch(weekday.iso_encoding()) {
     case 1:
-      return "Monday";
+      return shorten ? "Mon" :  "Monday";
     case 2:
-      return "Tuesday";
+      return shorten ? "Tues" : "Tuesday";
     case 3:
-      return "Wednesday";
+      return shorten ? "Wed" : "Wednesday";
     case 4:
-      return "Thursday";
+      return shorten ? "Thurs" : "Thursday";
     case 5:
-      return "Friday";
+      return shorten ? "Fri" : "Friday";
     case 6:
-      return "Saturday";
+      return shorten ? "Sat" : "Saturday";
     case 7:
-      return "Sunday";
+      return shorten ? "Sun" : "Sunday";
     default:
       return "???";
   }

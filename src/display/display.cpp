@@ -123,7 +123,8 @@ void Display::draw_calendar(std::chrono::year year, std::chrono::month month) {
     auto weekday = std::chrono::weekday{i};
 
     // draw days of week 1 line above calendar boxes
-    mvwprintw(m_display_window, box_y_offset - 1, static_cast<int>(box_x_offset + (i - 1) * box_width), "%s", DateStrings::weekday_to_str(weekday).c_str());
+    bool shorten = box_width <= DateStrings::MAX_WEEKDAY_CHAR_LEN;
+    mvwprintw(m_display_window, box_y_offset - 1, static_cast<int>(box_x_offset + (i - 1) * box_width), "%s", DateStrings::weekday_to_str(weekday, shorten).c_str());
   }
 
   if (year != m_displayed_year or month != m_displayed_month) {
