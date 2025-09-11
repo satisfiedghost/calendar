@@ -37,19 +37,18 @@ static void init_save_file(std::string save_file) {
 }
 
 DiskStorage::DiskStorage(std::string cal_file)
-  : m_save_file(cal_file + ".calendar") 
-  , m_temp_file(m_save_file + ".tmp") {
+  : m_save_file_path(cal_file + ".calendar") {
 
   // if this doesn't exist yet, init an empty save file
-  if (!fs::exists(m_save_file)) {
-    init_save_file(m_temp_file); // we'll be writing to the tempfile so init it here
-    fs::copy_file(m_temp_file, m_save_file, fs::copy_options::overwrite_existing); // as if reading from an empty save file
-  } else { // copy the existing save file to the temp (runtime) file
-    fs::copy_file(m_save_file, m_temp_file, fs::copy_options::overwrite_existing);
+  if (!fs::exists(m_save_file_path)) {
+    init_save_file(m_save_file_path); // we'll be writing to the tempfile so init it here
   }
 
-  m_outfile = std::ofstream(m_temp_file, std::ios::app);
-  m_infile = std::ifstream(m_save_file);
+  m_outfile_path = m_save_file_path + ".tmp";
+  init_save_file(m_outfile_path);
+
+  m_outfile = std::ofstream(m_outfile_path, std::ios::app);
+  m_infile = std::ifstream(m_save_file_path);
 
   std::string v_tag, line;
   int version;
@@ -64,13 +63,10 @@ DiskStorage::DiskStorage(std::string cal_file)
 
 DiskStorage::~DiskStorage() {
   // flush everything to disk
-  m_outfile.close();
-  // copy the temp file over the real one
-  fs::copy_file(m_temp_file, m_save_file, fs::copy_options::overwrite_existing);
-  // remove the tmpfile
   // TODO - should make persistent intermediate backups
-  fs::remove(m_temp_file);
-
+  m_outfile.close();
+  fs::copy_file(m_outfile_path, m_save_file_path, fs::copy_options::overwrite_existing);
+  fs::remove(m_outfile_path);
 }
 
 void DiskStorage::save(const Events::TodEvent& event) {

@@ -32,7 +32,8 @@ static std::string commands =
   "\tm[onth]   - Search for all events in a month.\n"
   "\td[ay]     - Search for all events in a given day.\n"
   "\th[elp]    - See this list of commands.\n"
-  "\tc[hange]  - Change the displayed month.\n";
+  "\tc[hange]  - Change the displayed month.\n"
+  "\td[elete]  - Delete an event.\n";
 
 static const std::array<std::string, static_cast<size_t>(Commands::USER_COMMAND_CNT)> COMMAND_STR = {
   "quit",
@@ -46,6 +47,7 @@ static const std::array<std::string, static_cast<size_t>(Commands::USER_COMMAND_
   "key_left",
   "key_right",
   "change",
+  "delete",
 };
 
 static bool matches_prefix(const std::string_view query, const std::string_view target) {
@@ -121,6 +123,16 @@ void CLIParser::print_str(const std::string& str) {
 void CLIParser::print_strln(const std::string& str) {
   wprintw(m_io_window, "%s\n", str.c_str());
   wrefresh(m_io_window);
+}
+
+std::optional<int> CLIParser::get_user_int_prompted(const std::string& prompt) {
+  int val;
+
+  if (!get_int(val, prompt, m_io_window)) {
+    return std::nullopt;
+  }
+
+  return val;
 }
 
 std::optional<std::chrono::year> CLIParser::get_user_year() {

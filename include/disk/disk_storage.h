@@ -24,8 +24,8 @@ public:
   void save(const Events::TodEvent&);
 
 private:
-  const std::string m_save_file;
-  const std::string m_temp_file;
+  const std::string m_save_file_path;
+  std::string m_outfile_path;
   std::ifstream m_infile;
   std::ofstream m_outfile;
   unsigned short m_save_file_version;

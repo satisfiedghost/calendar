@@ -29,6 +29,11 @@ public:
   OptionalEventView get_events(const std::chrono::year_month) const;
   OptionalEventView get_events(const std::chrono::year) const;
 
+  const std::deque<TodEvent>& get_all_events() const { return m_tod_events; }
+
+  // TODO - remove const_cast
+  void delete_event(TodPtr ptr) { const_cast<TodEvent*>(ptr)->erase(); }
+
 private:
 
   // update internal views
@@ -45,3 +50,4 @@ private:
 };
 
 }
+

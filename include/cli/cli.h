@@ -22,7 +22,8 @@ enum class Commands {
   MOVE_LEFT = 8,
   MOVE_RIGHT = 9,
   CHANGE_MONTH = 10,
-  USER_COMMAND_CNT = 11,
+  DELETE_EVENT = 11,
+  USER_COMMAND_CNT = 12,
 };
 
 
@@ -49,6 +50,8 @@ public:
   std::optional<std::chrono::year_month_day> get_user_ymd();
   // create an event from user input
   std::optional<Events::TodEvent> create_event();
+  // get an int from the user, with a custom prompt
+  std::optional<int> get_user_int_prompted(const std::string&);
 private:
   WINDOW* m_io_window_frame;
   WINDOW* m_io_window;

@@ -173,6 +173,7 @@ void Display::draw_info_window() {
 
   auto events = m_calendar.get_events(ymd);
 
+  m_displayed_events.clear();
   if (!events) {
     mvwprintw(m_info_window, 0, 0, "No events found.");
   } else {
@@ -184,13 +185,20 @@ void Display::draw_info_window() {
         });
 
     std::ostringstream event_stream;
+    size_t displayed_event_id = 0;
     for (const auto& event : sorted_events) {
-      event_stream << *event << "\n";
+      event_stream << "[" << ++displayed_event_id << "] " << *event << "\n";
+      m_displayed_events.push_back(event);
     }
     mvwprintw(m_info_window, 0, 0, "%s", event_stream.str().c_str());
   }
 
   wrefresh(m_info_window);
+}
+
+Events::EventStore::TodPtr Display::get_selected_event(size_t sel) {
+  // TODO - bounds checking
+  return m_displayed_events[sel];
 }
 
 void Display::set_windows(WINDOW * display_window, WINDOW* info_window) {

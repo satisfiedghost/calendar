@@ -197,6 +197,20 @@ void Application::run() {
       }
       break;
 
+      case CLI::Commands::DELETE_EVENT: {
+        auto user_del = m_parser.get_user_int_prompted("Selection for deletion: ");
+
+        if (!user_del) {
+          m_parser.print_strln("Not an int?");
+          continue;
+        } else if (*user_del > static_cast<int>(m_display.get_selected_event_cnt()) || *user_del < 1) {
+          m_parser.print_strln("Invalid selection.");
+        } else {
+          m_calendar.delete_event(m_display.get_selected_event(static_cast<size_t>(*user_del - 1)));
+        }
+      }
+      break;
+
       default:
         display_prompt = true;
         m_parser.print_strln("Command handler not implemented!");

@@ -46,6 +46,8 @@ public:
   const std::chrono::seconds get_tod() const { return m_tod; }
 
   bool is_deleted() const { return m_deleted; }
+
+  void erase() { m_deleted = true; }
 private:
   std::chrono::seconds m_tod; // time since midnight
   std::chrono::sys_days m_sys_days;

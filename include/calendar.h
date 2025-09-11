@@ -15,10 +15,13 @@ namespace Calendar {
 class Calendar {
 public:
   Calendar(std::string cal_file);
+  ~Calendar();
 
   // add an event to the calendar
   // set writethrough=false to avoid writing to disk
-  void add_event(const Events::TodEvent&, bool writethrough=true);
+  void add_event(const Events::TodEvent&);
+
+  void delete_event(Events::EventStore::TodPtr ptr) { m_event_store.delete_event(ptr); }
 
   // get an optional event vector for a given ymd, ym, or y
   // or nullopt if none are present for the requested date

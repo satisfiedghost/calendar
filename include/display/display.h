@@ -1,6 +1,7 @@
 #pragma once
 
 #include "calendar.h"
+#include "events/event_store.h"
 #include <chrono>
 #include <sys/ioctl.h>
 #include <ncursesw/ncurses.h>
@@ -27,6 +28,10 @@ public:
   void select_left();
 
   void select_right();
+
+  size_t get_selected_event_cnt() const { return m_displayed_events.size(); }
+
+  Events::EventStore::TodPtr get_selected_event(size_t sel);
 private:
   void draw_info_window();
 
@@ -37,6 +42,7 @@ private:
   const Calendar::Calendar& m_calendar;
   std::chrono::year m_displayed_year;
   std::chrono::month m_displayed_month;
+  std::vector<Events::EventStore::TodPtr> m_displayed_events;
 };
 
 struct BoxSettings {
