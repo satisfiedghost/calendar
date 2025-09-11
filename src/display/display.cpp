@@ -138,7 +138,6 @@ void Display::draw_calendar(std::chrono::year year, std::chrono::month month) {
   }
 
   m_boxes.clear();
-  m_selected_idx = 0; // always default to day 1 to prevent out of bounds when switching months
   unsigned int days_in_month = static_cast<unsigned int>((year/month/std::chrono::last).day());
   unsigned int weekday_start = std::chrono::weekday{std::chrono::sys_days{year/month/1}}.iso_encoding();
 
@@ -161,6 +160,11 @@ void Display::draw_calendar(std::chrono::year year, std::chrono::month month) {
     }
   }
   done:
+
+  // when switching months, this might be pointing beyond the end of the month
+  if (m_selected_idx >= m_boxes.size()) {
+    m_selected_idx = m_boxes.size() - 1;
+  }
 
   for (auto& box : m_boxes) {
     box.draw(m_display_window, false);
