@@ -37,6 +37,9 @@ private:
 
   void draw_info_window();
 
+  // check if a given ymd has any events (used to mark boxes)
+  bool ymd_has_event(std::chrono::year_month_day);
+
   WINDOW* m_display_window;
   WINDOW* m_info_window;
   std::vector<Box> m_boxes;
@@ -56,9 +59,10 @@ struct BoxSettings {
 
 class Box {
 public:
-  Box(BoxSettings settings, unsigned int day)
+  Box(BoxSettings settings, unsigned int day, bool has_event)
     : m_settings(settings)
     , m_day(day)
+    , m_has_event(has_event)
   {}
 
   // draw the box with x, y as the top left coords
@@ -67,9 +71,9 @@ public:
   // clear the area on which the box is drawn
   void clear(WINDOW* window) const;
 private:
-
   BoxSettings m_settings;
   unsigned int m_day;
+  bool m_has_event;
 
   static const char* BOX_TOP_R;
   static const char* BOX_BOT_L;

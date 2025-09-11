@@ -51,7 +51,12 @@ void Box::draw(WINDOW* window, bool bold) const {
     // on first iteration, put day in top left
     if (i == 0) {
       mvwprintw(window, static_cast<int>(m_settings.y + 1), static_cast<int>(m_settings.x + 1), "%02d", m_day);
+      // mark if this box has an event
+      if (m_has_event) {
+        mvwprintw(window, static_cast<int>(m_settings.y + 1), getcurx(window), "*");
+      }
     }
+
     mvwprintw(window, static_cast<int>(m_settings.y + i + 1), static_cast<int>(m_settings.x + m_settings.w - 1), "%s", ((bold) ? BOX_SIDE_V_BOLD : BOX_SIDE_V));
   }
 
@@ -132,26 +137,27 @@ void Display::draw_calendar(std::chrono::year year, std::chrono::month month) {
     mvwprintw(m_display_window, box_y_offset - 1, static_cast<int>(box_x_offset + (i - 1) * box_width), "%s", DateStrings::weekday_to_str(weekday, shorten).c_str());
   }
 
-  if (year != m_displayed_year or month != m_displayed_month) {
-    m_boxes.clear();
-    m_selected_idx = 0; // always default to day 1 to prevent out of bounds when switching months
-    unsigned int days_in_month = static_cast<unsigned int>((year/month/std::chrono::last).day());
-    unsigned int weekday_start = std::chrono::weekday{std::chrono::sys_days{year/month/1}}.iso_encoding();
+  m_boxes.clear();
+  m_selected_idx = 0; // always default to day 1 to prevent out of bounds when switching months
+  unsigned int days_in_month = static_cast<unsigned int>((year/month/std::chrono::last).day());
+  unsigned int weekday_start = std::chrono::weekday{std::chrono::sys_days{year/month/1}}.iso_encoding();
 
-    for (unsigned int j = 0; j < 5; j++) {
-      for (unsigned int i = 0; i < 7; i++) {
-        unsigned int day = i + j * 7 + 1;
-        if (day < weekday_start) {
-          continue;
-        } else if (day > days_in_month) {
-          goto done;
-        } 
-        auto day_of_week = (i + j * 7 + 1) - weekday_start + 1;
-        auto box_x_start = box_x_offset + i * box_width;
-        auto box_y_start = box_y_offset + j * box_height;
+  for (unsigned int j = 0; j < 5; j++) {
+    for (unsigned int i = 0; i < 7; i++) {
+      unsigned int day = i + j * 7 + 1;
+      if (day < weekday_start) {
+        continue;
+      } else if (day > days_in_month) {
+        goto done;
+      } 
 
-        m_boxes.emplace_back(BoxSettings{box_x_start, box_y_start, box_width, box_height}, day_of_week);
-      }
+      auto day_of_week = (i + j * 7 + 1) - weekday_start + 1;
+      auto box_x_start = box_x_offset + i * box_width;
+      auto box_y_start = box_y_offset + j * box_height;
+      bool has_event = ymd_has_event(
+          std::chrono::year_month_day{year, month, std::chrono::day{day_of_week}});
+
+      m_boxes.emplace_back(BoxSettings{box_x_start, box_y_start, box_width, box_height}, day_of_week, has_event);
     }
   }
   done:
@@ -164,6 +170,10 @@ void Display::draw_calendar(std::chrono::year year, std::chrono::month month) {
   m_displayed_year = year;
   m_displayed_month = month;
   wrefresh(m_display_window);
+}
+
+bool Display::ymd_has_event(std::chrono::year_month_day ymd) {
+  return static_cast<bool>(m_calendar.get_events(ymd));
 }
 
 void Display::draw_info_window() {
