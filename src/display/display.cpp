@@ -143,14 +143,16 @@ void Display::draw_calendar(std::chrono::year year, std::chrono::month month) {
 
   for (unsigned int j = 0; j < 5; j++) {
     for (unsigned int i = 0; i < 7; i++) {
-      unsigned int day = i + j * 7 + 1;
-      if (day < weekday_start) {
+      unsigned int box_no = i + j * 7 + 1;
+      if (box_no < weekday_start) {
         continue;
-      } else if (day > days_in_month) {
+      }
+
+      auto day_of_week = (i + j * 7 + 1) - weekday_start + 1;
+      if (day_of_week > days_in_month) {
         goto done;
       } 
 
-      auto day_of_week = (i + j * 7 + 1) - weekday_start + 1;
       auto box_x_start = box_x_offset + i * box_width;
       auto box_y_start = box_y_offset + j * box_height;
       bool has_event = ymd_has_event(
