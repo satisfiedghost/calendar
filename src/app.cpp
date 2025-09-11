@@ -92,7 +92,7 @@ void Application::run() {
   };
 
   while(cmd != CLI::Commands::QUIT) {
-    m_display.draw_calendar(display_year, display_month);
+    m_display.draw(display_year, display_month);
     cmd = m_parser.get_user_cmd();
 
     if (!cmd) {

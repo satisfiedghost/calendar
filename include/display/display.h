@@ -19,8 +19,6 @@ public:
 
   void set_windows(WINDOW*, WINDOW*);
 
-  void draw_calendar(std::chrono::year, std::chrono::month);
-
   void select_up();
 
   void select_down();
@@ -32,7 +30,11 @@ public:
   size_t get_selected_event_cnt() const { return m_displayed_events.size(); }
 
   Events::EventStore::TodPtr get_selected_event(size_t sel);
+
+  void draw(std::chrono::year, std::chrono::month);
 private:
+  void draw_calendar(std::chrono::year, std::chrono::month);
+
   void draw_info_window();
 
   WINDOW* m_display_window;

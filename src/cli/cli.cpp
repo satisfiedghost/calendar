@@ -94,10 +94,14 @@ static std::string get_input_line(const std::string& input_prompt, WINDOW* io_wi
 
     if (ch == KEY_BACKSPACE || ch == 127 || ch == 8) {
       if (!input_buffer.empty()) {
+        wmove(io_window, getcury(io_window), getcurx(io_window) - 1);
+        wclrtoeol(io_window);
         input_buffer.pop_back();
       }
     } else if (ch == CTRL_U) { // clear whole line
+      wmove(io_window, getcury(io_window), 0);
       input_buffer.clear();
+      wclrtoeol(io_window);
     } else if (ch >= 32 && ch <= 127) { // printable ascii
       input_buffer.push_back(static_cast<char>(ch));
     }

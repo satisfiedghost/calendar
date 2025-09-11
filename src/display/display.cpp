@@ -96,6 +96,11 @@ void Display::select_right() {
   }
 }
 
+void Display::draw(std::chrono::year y, std::chrono::month m) {
+  draw_calendar(y, m);
+  draw_info_window();
+}
+
 void Display::draw_calendar(std::chrono::year year, std::chrono::month month) {
   //constexpr unsigned int box_x_offset = 5;
 
@@ -159,8 +164,6 @@ void Display::draw_calendar(std::chrono::year year, std::chrono::month month) {
   m_displayed_year = year;
   m_displayed_month = month;
   wrefresh(m_display_window);
-
-  draw_info_window();
 }
 
 void Display::draw_info_window() {
