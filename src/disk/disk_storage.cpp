@@ -15,6 +15,7 @@ constexpr char TOD_MONTH_HEADER[] = "Month";
 constexpr char TOD_DAY_HEADER[] = "Day";
 constexpr char TOD_HOUR_HEADER[] = "Hour";
 constexpr char TOD_MINUTE_HEADER[] = "Minute";
+constexpr char TOD_DURATION_HEADER[] = "Duration";
 
 #include <cstdlib>
 
@@ -33,6 +34,7 @@ static void init_save_file(std::string save_file) {
   init_file << TOD_DAY_HEADER << DELIM;
   init_file << TOD_HOUR_HEADER << DELIM;
   init_file << TOD_MINUTE_HEADER << DELIM;
+  init_file << TOD_DURATION_HEADER << DELIM;
   init_file << NEWLINE;
 }
 
@@ -80,6 +82,7 @@ void DiskStorage::save(const Events::TodEvent& event) {
   hh_mm_ss hms(event.m_tod);
   m_outfile << hms.hours().count() << DELIM;
   m_outfile << hms.minutes().count() << DELIM;
+  m_outfile << event.m_duration.count() << DELIM;
   m_outfile << NEWLINE;
 }
 
@@ -95,14 +98,14 @@ std::optional<Events::TodEvent> DiskStorage::load_event() {
 
   std::string in_context;
   int in_year;
-  unsigned int in_month, in_day, in_hour, in_minute;
+  unsigned int in_month, in_day, in_hour, in_minute, duration;
   std::istringstream iss(line);
   std::getline(iss, in_context, '\t');
 
-  iss >> in_year >> in_month >> in_day >> in_hour >> in_minute;
+  iss >> in_year >> in_month >> in_day >> in_hour >> in_minute >> duration;
 
   year_month_day&& ymd{year{in_year}, month{in_month}, day{in_day}};
-  Events::TodEvent event(in_context, ymd, hours{in_hour}, minutes{in_minute});
+  Events::TodEvent event(in_context, ymd, hours{in_hour}, minutes{in_minute}, duration);
 
   return event;
 }

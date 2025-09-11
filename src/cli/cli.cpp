@@ -261,7 +261,7 @@ std::optional<Events::TodEvent> CLIParser::create_event_duration(std::chrono::ye
     return std::nullopt;
   }
 
-  return Events::TodEvent(description, ymd, mmhh, dur * 60);
+  return Events::TodEvent(description, ymd, mmhh, static_cast<unsigned int>(dur * 60));
 }
 
 std::optional<Events::TodEvent> CLIParser::create_event(std::chrono::year_month_day ymd) {

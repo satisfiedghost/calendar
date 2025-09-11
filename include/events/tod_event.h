@@ -18,7 +18,7 @@ class TodEvent : protected Event {
 public:
   virtual ~TodEvent() = default;
 
-  TodEvent(std::string context, std::chrono::year_month_day ymd, std::chrono::hh_mm_ss<std::chrono::seconds> hms, int duration = 0)
+  TodEvent(std::string context, std::chrono::year_month_day ymd, std::chrono::hh_mm_ss<std::chrono::seconds> hms, unsigned int duration = 0)
     : Event(context) 
     , m_tod{std::chrono::seconds{hms.hours().count() * 3600 + hms.minutes().count() * 60}}
     , m_sys_days(ymd)
@@ -27,12 +27,12 @@ public:
   {}
 
   // convenience delegating ctors
-  TodEvent(std::string context, std::chrono::year_month_day ymd, std::chrono::seconds tod)
-    : TodEvent(context, ymd, std::chrono::hh_mm_ss<std::chrono::seconds>(tod))
+  TodEvent(std::string context, std::chrono::year_month_day ymd, std::chrono::seconds tod, unsigned int duration = 0)
+    : TodEvent(context, ymd, std::chrono::hh_mm_ss<std::chrono::seconds>(tod), duration)
     {}
 
-  TodEvent(std::string context, std::chrono::year_month_day ymd, std::chrono::hours h, std::chrono::minutes m)
-    : TodEvent(context, ymd, std::chrono::seconds(h.count() * 3600 + m.count() * 60))
+  TodEvent(std::string context, std::chrono::year_month_day ymd, std::chrono::hours h, std::chrono::minutes m, unsigned int duration = 0)
+    : TodEvent(context, ymd, std::chrono::seconds(h.count() * 3600 + m.count() * 60), duration)
   {}
 
   // get the ymd for this event
