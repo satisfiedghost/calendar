@@ -68,7 +68,6 @@ Application::~Application() {
 
 void Application::run() {
   std::optional<CLI::Commands> cmd = CLI::Commands::NONE;
-  bool display_prompt = true;
 
   // get the current time and display the current month as the default view
   const auto now = std::chrono::system_clock::now();
@@ -94,10 +93,9 @@ void Application::run() {
 
   while(cmd != CLI::Commands::QUIT) {
     m_display.draw_calendar(display_year, display_month);
-    cmd = m_parser.get_user_cmd(display_prompt);
+    cmd = m_parser.get_user_cmd();
 
     if (!cmd) {
-      display_prompt = true;
       m_parser.print_strln("Command not recognized.");
       continue;
     }
@@ -110,7 +108,6 @@ void Application::run() {
       break;
 
       case CLI::Commands::CREATE_EVENT: {
-        display_prompt = true;
         auto e = m_parser.create_event();
         if (!e) {
           m_parser.print_strln("Unable to create event!");
@@ -121,7 +118,6 @@ void Application::run() {
       break;
       
       case CLI::Commands::YEAR_SEARCH: {
-        display_prompt = true;
         auto year = m_parser.get_user_year();
         if (!year) {
           m_parser.print_strln("Invalid year.");
@@ -133,7 +129,6 @@ void Application::run() {
       break;
       
       case CLI::Commands::YEAR_MONTH_SEARCH: {
-        display_prompt = true;
         auto year_month = m_parser.get_user_year_month();
         if (!year_month) {
           m_parser.print_strln("Invalid year month.");
@@ -147,7 +142,6 @@ void Application::run() {
       break;
 
       case CLI::Commands::YEAR_MONTH_DAY_SEARCH: {
-        display_prompt = true;
         auto ymd = m_parser.get_user_ymd();
         if (!ymd) {
           m_parser.print_strln("Invalid year month day.");
@@ -162,27 +156,22 @@ void Application::run() {
       break;
 
       case CLI::Commands::PRINT_COMMANDS:
-        display_prompt = true;
         m_parser.print_cmds();
       break;
 
       case CLI::Commands::MOVE_UP:
-        display_prompt = false;
         m_display.select_up();
       break;
 
       case CLI::Commands::MOVE_DOWN:
-        display_prompt = false;
         m_display.select_down();
       break;
 
       case CLI::Commands::MOVE_LEFT:
-        display_prompt = false;
         m_display.select_left();
       break;
 
       case CLI::Commands::MOVE_RIGHT:
-        display_prompt = false;
         m_display.select_right();
       break;
 
@@ -212,7 +201,6 @@ void Application::run() {
       break;
 
       default:
-        display_prompt = true;
         m_parser.print_strln("Command handler not implemented!");
       break;
     }

@@ -17,7 +17,7 @@ using namespace std::chrono;
 constexpr int CTRL_U = 21;
 
 static std::string description_prompt = "Description: ";
-static std::string command_prompt = "Command: ";
+static std::string command_prompt = "$> ";
 static std::string year_prompt = "Year (YYYY): ";
 static std::string month_prompt = "Month (MM): ";
 static std::string day_prompt = "Day (DD): ";
@@ -55,10 +55,19 @@ static bool matches_prefix(const std::string_view query, const std::string_view 
 }
 
 static std::string get_input_line(const std::string& input_prompt, WINDOW* io_window) {
-  std::string input_buffer;
-  if (!input_prompt.empty()) {
-    wprintw(io_window, "%s\n", input_prompt.c_str());
-  }
+  static std::string input_buffer;
+  std::string user_input;
+
+  auto echo = [&]() {
+    wmove(io_window, getcury(io_window), 0);
+    wprintw(io_window, "%s", input_prompt.c_str());
+    wprintw(io_window, "%s", input_buffer.c_str());
+    curs_set(1);
+    wrefresh(io_window);
+  };
+
+  // print input buffer if returning from e.g. keypress
+  echo();
 
   int ch = 0;
   while (ch != '\n') {
@@ -84,18 +93,15 @@ static std::string get_input_line(const std::string& input_prompt, WINDOW* io_wi
     } else if (ch >= 32 && ch <= 127) { // printable ascii
       input_buffer.push_back(static_cast<char>(ch));
     }
-
-    wmove(io_window, getcury(io_window), 0);
-    wclrtoeol(io_window);
-    wprintw(io_window, "%s", input_buffer.c_str());
-    curs_set(1);
-    wrefresh(io_window);
+    echo();
   }
 
   wprintw(io_window, "\n");
   wrefresh(io_window);
 
-  return input_buffer;
+  user_input = input_buffer;
+  input_buffer.clear();
+  return user_input;
 }
 
 template<typename T>
@@ -203,8 +209,8 @@ void CLIParser::print_cmds() const {
 
 
 
-std::optional<Commands> CLIParser::get_user_cmd(bool display_prompt) {
-  auto user_input = get_input_line(display_prompt ? command_prompt : "", m_io_window);
+std::optional<Commands> CLIParser::get_user_cmd() {
+  auto user_input = get_input_line(command_prompt, m_io_window);
 
   for (size_t i = 0; i < COMMAND_STR.size(); i++) {
     if (matches_prefix(user_input, COMMAND_STR[i])) {

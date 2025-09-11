@@ -33,7 +33,7 @@ public:
   CLIParser() {}
   // parse a command from user input
   // returns nullopt if command wasn't understood
-  std::optional<Commands> get_user_cmd(bool display_prompt);
+  std::optional<Commands> get_user_cmd();
   // set the window pointers
   void set_windows(WINDOW* io_window_frame, WINDOW* io_window);
   // print a string, verbatim
