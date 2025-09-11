@@ -50,10 +50,16 @@ void Box::draw(WINDOW* window, bool bold) const {
 
     // on first iteration, put day in top left
     if (i == 0) {
+      if (bold) {
+        wattr_on(window, COLOR_PAIR(1), NULL);
+      }
       mvwprintw(window, static_cast<int>(m_settings.y + 1), static_cast<int>(m_settings.x + 1), "%02d", m_day);
+      if (bold) {
+        wattr_off(window, COLOR_PAIR(1), NULL);
+      }
       // mark if this box has an event
       if (m_has_event) {
-        mvwprintw(window, static_cast<int>(m_settings.y + 1), getcurx(window), "*");
+        mvwprintw(window, static_cast<int>(m_settings.y + 1), static_cast<int>(m_settings.x + m_settings.w - 2), "*");
       }
     }
 

@@ -13,7 +13,10 @@ Application::Application(CLI::Display& display, CLI::CLIParser& parser, Calendar
 
   setlocale(LC_ALL, ""); // enable unicode
   initscr();
+  start_color();
   noecho();
+
+  init_pair(1, COLOR_BLACK, COLOR_WHITE);
 
   int term_h, term_w;
   getmaxyx(stdscr, term_h, term_w);
