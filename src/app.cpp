@@ -186,6 +186,27 @@ void Application::run() {
       }
       break;
 
+      case CLI::Commands::SHIFT_LEFT : {
+        if (display_month == std::chrono::month{1}) {
+          display_month = std::chrono::month{12};
+          display_year--;
+        } else {
+          display_month--;
+        }
+      }
+      break;
+
+      case CLI::Commands::SHIFT_RIGHT : {
+        if (display_month == std::chrono::month{12}) {
+          display_month = std::chrono::month{1};
+          display_year++;
+        } else {
+          display_month++;
+        }
+
+      }
+      break;
+
       case CLI::Commands::DELETE_EVENT: {
         auto user_del = m_parser.get_user_int_prompted("Selection for deletion: ");
 

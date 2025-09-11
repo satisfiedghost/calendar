@@ -48,6 +48,8 @@ static const std::array<std::string, static_cast<size_t>(Commands::USER_COMMAND_
   "key_right",
   "change",
   "delete",
+  "shift_left",
+  "shift_right",
 };
 
 static bool matches_prefix(const std::string_view query, const std::string_view target) {
@@ -82,6 +84,10 @@ static std::string get_input_line(const std::string& input_prompt, WINDOW* io_wi
       return "key_left";
     } else if (ch == KEY_RIGHT) {
       return "key_right";
+    } else if (ch == KEY_SLEFT) {
+      return "shift_left";
+    } else if (ch == KEY_SRIGHT) {
+      return "shift_right";
     }
 
     if (ch == KEY_BACKSPACE || ch == 127 || ch == 8) {

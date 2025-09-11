@@ -23,7 +23,9 @@ enum class Commands {
   MOVE_RIGHT = 9,
   CHANGE_MONTH = 10,
   DELETE_EVENT = 11,
-  USER_COMMAND_CNT = 12,
+  SHIFT_LEFT = 12,
+  SHIFT_RIGHT = 13,
+  USER_COMMAND_CNT = 14,
 };
 
 
