@@ -26,23 +26,23 @@ static std::string minute_prompt = "Minute (MM): ";
 
 static std::string commands = 
   "Available commands:\n"
-  "\tq[uit]    - Quit\n"
-  "\te[vent]   - Create an event\n"
-  "\ty[ear]    - Search for all events in a year.\n"
-  "\tm[onth]   - Search for all events in a month.\n"
-  "\td[ay]     - Search for all events in a given day.\n"
-  "\th[elp]    - See this list of commands.\n"
-  "\tc[hange]  - Change the displayed month.\n"
-  "\tde[lete]  - Delete an event.\n"
-  "\t[↑↓←→]    - Change day selection.\n"
-  "\tShift+[←→]    - Change month selection.\n";
+  "\tq[uit]     - Quit\n"
+  "\te[vent]    - Create an event\n"
+  "\t[↑↓←→]     - Change day selection.\n"
+  "\tShift+[←→] - Change month selection.\n"
+  "\td[elete]   - Delete an event.\n"
+  "\tsy[ear]    - Search for all events in a year.\n"
+  "\tsm[onth]   - Search for all events in a month.\n"
+  "\tsd[ay]     - Search for all events in a given day.\n"
+  "\tc[hange]   - Change the displayed month.\n"
+  "\th[elp]     - See this list of commands.\n";
 
 static const std::array<std::string, static_cast<size_t>(Commands::USER_COMMAND_CNT)> COMMAND_STR = {
   "quit",
   "event",
-  "year",
-  "month",
-  "day",
+  "syear",
+  "smonth",
+  "sday",
   "help",
   "key_up",
   "key_down",
@@ -240,21 +240,11 @@ void CLIParser::set_windows(WINDOW *io_window_frame, WINDOW *io_window) {
   mvwprintw(m_io_window, getmaxy(m_io_window) - 1, 0, "%s", commands.c_str());
 }
 
-std::optional<Events::TodEvent> CLIParser::create_event() {
+std::optional<Events::TodEvent> CLIParser::create_event(std::chrono::year_month_day ymd) {
   std::string description;
-  int y, m, h;
-  unsigned  mo, d;
+  int m, h;
 
   description = get_input_line(description_prompt, m_io_window);
-  if (!get_int(y, year_prompt, m_io_window)) {
-    return std::nullopt;
-  }
-  if (!get_int(mo, month_prompt, m_io_window)) {
-    return std::nullopt;
-  }
-  if (!get_int(d, day_prompt, m_io_window)) {
-    return std::nullopt;
-  }
   if (!get_int(h, hour_prompt, m_io_window)) {
     return std::nullopt;
   }
@@ -262,8 +252,6 @@ std::optional<Events::TodEvent> CLIParser::create_event() {
     return std::nullopt;
   }
 
-  wprintw(m_io_window, "Creating event for %02i-%02i-%04u, @%02i:%02i\n", d, mo, y, h, m);
-  year_month_day ymd{year{y}, month{mo}, day{d}};
   hh_mm_ss<seconds> mmhh{hours{h} + minutes{m}};
 
   return Events::TodEvent(description, ymd, mmhh);

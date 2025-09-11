@@ -32,6 +32,11 @@ public:
   Events::EventStore::TodPtr get_selected_event(size_t sel);
 
   void draw(std::chrono::year, std::chrono::month);
+
+  std::chrono::year_month_day get_selected_ymd();
+
+  // if the current selection is displaying any events
+  bool is_displaying_events();
 private:
   void draw_calendar(std::chrono::year, std::chrono::month);
 

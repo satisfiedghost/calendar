@@ -111,7 +111,7 @@ void Application::run() {
       break;
 
       case CLI::Commands::CREATE_EVENT: {
-        auto e = m_parser.create_event();
+        auto e = m_parser.create_event(m_display.get_selected_ymd());
         if (!e) {
           m_parser.print_strln("Unable to create event!");
           continue;
@@ -211,6 +211,10 @@ void Application::run() {
       break;
 
       case CLI::Commands::DELETE_EVENT: {
+        if (!m_display.is_displaying_events()) {
+          m_parser.print_strln("No events for this day.");
+          continue;
+        }
         auto user_del = m_parser.get_user_int_prompted("Selection for deletion: ");
 
         if (!user_del) {

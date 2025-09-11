@@ -192,10 +192,6 @@ bool Display::ymd_has_event(std::chrono::year_month_day ymd) {
   return static_cast<bool>(m_calendar.get_events(ymd));
 }
 
-bool Display::is_displaying_events() {
-  return ymd_has_event({m_displayed_year, m_displayed_month, std::chrono::day{static_cast<unsigned int>(m_selected_idx + 1)}});
-}
-
 void Display::draw_info_window() {
   // this is the selected ymd
   auto ymd = std::chrono::year_month_day{m_displayed_year,

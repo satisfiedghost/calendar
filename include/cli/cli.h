@@ -51,7 +51,7 @@ public:
   // get a year_month_day from the user
   std::optional<std::chrono::year_month_day> get_user_ymd();
   // create an event from user input
-  std::optional<Events::TodEvent> create_event();
+  std::optional<Events::TodEvent> create_event(std::chrono::year_month_day);
   // get an int from the user, with a custom prompt
   std::optional<int> get_user_int_prompted(const std::string&);
 private:
