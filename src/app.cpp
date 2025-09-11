@@ -119,6 +119,16 @@ void Application::run() {
         m_calendar.add_event(*e);
       }
       break;
+
+      case CLI::Commands::CREATE_EVENT_DURATION: {
+        auto e = m_parser.create_event_duration(m_display.get_selected_ymd());
+        if (!e) {
+          m_parser.print_strln("Unable to create event!");
+          continue;
+        }
+        m_calendar.add_event(*e);
+      }
+      break;
       
       case CLI::Commands::YEAR_SEARCH: {
         auto year = m_parser.get_user_year();

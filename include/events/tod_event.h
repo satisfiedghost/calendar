@@ -18,11 +18,12 @@ class TodEvent : protected Event {
 public:
   virtual ~TodEvent() = default;
 
-  TodEvent(std::string context, std::chrono::year_month_day ymd, std::chrono::hh_mm_ss<std::chrono::seconds> hms)
+  TodEvent(std::string context, std::chrono::year_month_day ymd, std::chrono::hh_mm_ss<std::chrono::seconds> hms, int duration = 0)
     : Event(context) 
     , m_tod{std::chrono::seconds{hms.hours().count() * 3600 + hms.minutes().count() * 60}}
     , m_sys_days(ymd)
     , m_deleted(false)
+    , m_duration(duration)
   {}
 
   // convenience delegating ctors
@@ -52,6 +53,7 @@ private:
   std::chrono::seconds m_tod; // time since midnight
   std::chrono::sys_days m_sys_days;
   bool m_deleted;
+  std::chrono::seconds m_duration;
 };
 
 }

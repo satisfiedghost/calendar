@@ -23,14 +23,16 @@ static std::string month_prompt = "Month (MM): ";
 static std::string day_prompt = "Day (DD): ";
 static std::string hour_prompt = "Hour (HH): ";
 static std::string minute_prompt = "Minute (MM): ";
+static std::string duration_prompt = "Duration (MMM): ";
 
 static std::string commands = 
   "Available commands:\n"
   "\tq[uit]     - Quit\n"
   "\te[vent]    - Create an event\n"
+  "\td[uration] - Create an event with a duration\n"
   "\t[↑↓←→]     - Change day selection.\n"
   "\tShift+[←→] - Change month selection.\n"
-  "\td[elete]   - Delete an event.\n"
+  "\tde[lete]   - Delete an event.\n"
   "\tsy[ear]    - Search for all events in a year.\n"
   "\tsm[onth]   - Search for all events in a month.\n"
   "\tsd[ay]     - Search for all events in a given day.\n"
@@ -52,6 +54,7 @@ static const std::array<std::string, static_cast<size_t>(Commands::USER_COMMAND_
   "delete",
   "shift_left",
   "shift_right",
+  "duration",
 };
 
 static bool matches_prefix(const std::string_view query, const std::string_view target) {
@@ -238,6 +241,27 @@ void CLIParser::set_windows(WINDOW *io_window_frame, WINDOW *io_window) {
   m_io_window = io_window;
   werase(m_io_window);
   mvwprintw(m_io_window, getmaxy(m_io_window) - 1, 0, "%s", commands.c_str());
+}
+
+std::optional<Events::TodEvent> CLIParser::create_event_duration(std::chrono::year_month_day ymd) {
+  std::string description;
+  int m, h, dur;
+
+  description = get_input_line(description_prompt, m_io_window);
+  if (!get_int(h, hour_prompt, m_io_window)) {
+    return std::nullopt;
+  }
+  if (!get_int(m, minute_prompt, m_io_window)) {
+    return std::nullopt;
+  }
+
+  hh_mm_ss<seconds> mmhh{hours{h} + minutes{m}};
+
+  if (!get_int(dur, duration_prompt, m_io_window)) {
+    return std::nullopt;
+  }
+
+  return Events::TodEvent(description, ymd, mmhh, dur * 60);
 }
 
 std::optional<Events::TodEvent> CLIParser::create_event(std::chrono::year_month_day ymd) {

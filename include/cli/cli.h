@@ -25,7 +25,8 @@ enum class Commands {
   DELETE_EVENT = 11,
   SHIFT_LEFT = 12,
   SHIFT_RIGHT = 13,
-  USER_COMMAND_CNT = 14,
+  CREATE_EVENT_DURATION = 14,
+  USER_COMMAND_CNT = 15,
 };
 
 
@@ -52,6 +53,8 @@ public:
   std::optional<std::chrono::year_month_day> get_user_ymd();
   // create an event from user input
   std::optional<Events::TodEvent> create_event(std::chrono::year_month_day);
+  // create an event from user input, with a duration
+  std::optional<Events::TodEvent> create_event_duration(std::chrono::year_month_day);
   // get an int from the user, with a custom prompt
   std::optional<int> get_user_int_prompted(const std::string&);
 private:
