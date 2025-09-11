@@ -45,6 +45,9 @@ EventStore::OptionalEventView EventStore::get_events(const year_month_day ymd) c
                  std::back_inserter(valid_events),
                  [](TodPtr tp){ return !tp->is_deleted(); });
 
+    if (valid_events.size() == 0) {
+      return std::nullopt;
+    }
     return valid_events;
   }
   return std::nullopt;
@@ -59,6 +62,9 @@ EventStore::OptionalEventView EventStore::get_events(const year_month year_month
                  std::back_inserter(valid_events),
                  [](TodPtr tp){ return !tp->is_deleted(); });
 
+    if (valid_events.size() == 0) {
+      return std::nullopt;
+    }
     return valid_events;
   }
   return std::nullopt;
@@ -73,6 +79,9 @@ EventStore::OptionalEventView EventStore::get_events(const year year) const {
                  std::back_inserter(valid_events),
                  [](TodPtr tp){ return !tp->is_deleted(); });
 
+    if (valid_events.size() == 0) {
+      return std::nullopt;
+    }
     return valid_events;
   }
   return std::nullopt;
