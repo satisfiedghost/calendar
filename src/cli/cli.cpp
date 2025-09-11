@@ -33,7 +33,9 @@ static std::string commands =
   "\td[ay]     - Search for all events in a given day.\n"
   "\th[elp]    - See this list of commands.\n"
   "\tc[hange]  - Change the displayed month.\n"
-  "\tde[lete]  - Delete an event.\n";
+  "\tde[lete]  - Delete an event.\n"
+  "\t[↑↓←→]    - Change day selection.\n"
+  "\tShift+[←→]    - Change month selection.\n";
 
 static const std::array<std::string, static_cast<size_t>(Commands::USER_COMMAND_CNT)> COMMAND_STR = {
   "quit",
