@@ -1,9 +1,11 @@
 #include <algorithm>
+#include <array>
 #include <curses.h>
 #include <iostream>
 #include <stdexcept>
 #include <unistd.h>
 #include <vector>
+#include <cstdio>
 
 #include "display/display.h"
 #include "events/tod_event.h"
@@ -196,6 +198,19 @@ bool Display::is_displaying_events() {
   return ymd_has_event({m_displayed_year, m_displayed_month, std::chrono::day{static_cast<unsigned int>(m_selected_idx + 1)}});
 }
 
+static std::string get_fortune() {
+  std::array<char, 256> buf;
+  std::string result;
+
+  FILE* pipe = popen("fortune", "r");
+
+  while (fgets(buf.data(), buf.size(), pipe) != nullptr) {
+    result += buf.data();
+  }
+
+  return result;
+}
+
 void Display::draw_info_window() {
   // this is the selected ymd
   auto ymd = std::chrono::year_month_day{m_displayed_year,
@@ -208,7 +223,8 @@ void Display::draw_info_window() {
 
   m_displayed_events.clear();
   if (!events) {
-    mvwprintw(m_info_window, 0, 0, "No events found.");
+    mvwprintw(m_info_window, 0, 0, "No events found, have a fortune instead.");
+    mvwprintw(m_info_window, 2, 0, "%s", get_fortune().c_str());
   } else {
     std::vector<const Events::TodEvent*> sorted_events((*events).begin(), (*events).end());
 
