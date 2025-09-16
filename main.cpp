@@ -10,7 +10,9 @@
 #include "events/tod_event.h"
 #include "util/date_strings.h"
 #include "util/chrono_literal_extensions.h"
+#include "util/ics.h"
 
+#include <iostream>
 using namespace std::chrono;
 using namespace std::chrono_literals;
 
@@ -23,7 +25,17 @@ int main(int argc, char* argv[]) {
     return -1;
   }
 
+  Util::IcsParser ics_parser("margot.ics");
   Calendar::Calendar calendar{std::string(argv[1])};
+  auto event = ics_parser.get_event();
+  while (event) {
+    calendar.add_event(*event);
+    std::cout << *event << std::endl;
+    event = ics_parser.get_event();
+  }
+  return 0;
+
+
   CLI::Display display(calendar);
   CLI::CLIParser parser;
 

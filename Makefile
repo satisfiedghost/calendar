@@ -4,7 +4,7 @@ LDLIBS := -lncursesw
 
 .PHONY: clean clena all
 INC_DIRS := include
-SRC_DIRS := src src/events src/ymd src/disk src/cli src/display
+SRC_DIRS := src src/events src/ymd src/disk src/cli src/display src/util
 OBJ_DIR := build
 
 CXXFLAGS += $(addprefix -I,$(INC_DIRS))
