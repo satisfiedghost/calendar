@@ -12,7 +12,7 @@ struct IcsKeyValue {
   std::string key;
   std::vector<std::string> key_params;
   std::string value;
-  std::vector<std::string> value_params;
+  bool complex = false;
 };
 
 struct IcsComponent {

@@ -39,14 +39,18 @@ static void getline_crlf(T& t, U& u, Args&&... args) {
   while (cont) {
     std::getline(t, line, std::forward<Args>(args)...);
 
+    if (line.back() == '\r') {
+      line.pop_back();
+    }
+
     if (line[0] != ' ') {
+      if (u.empty()) {
+        u = line;
+        line.clear();
+      }
       cont = false;
     } else {
       line.erase(0, 1);
-    }
-
-    if (line.back() == '\r') {
-      line.pop_back();
     }
 
     if (cont) {
@@ -80,40 +84,58 @@ static IcsKeyValue parse_line(const std::string& line) {
     }
   }
 
-  delim_pos = body.find(';');
-  if (delim_pos == std::string::npos) {
-    ics_keyval.value = body;
-  } else {
-    ics_keyval.value = "COMPLEX";
+  ics_keyval.value = body;
 
-    ics_keyval.value_params.push_back(body.substr(0, delim_pos));
-    std::string params = body.substr(delim_pos + 1);
-    std::stringstream ss(params);
-    std::string param;
-
-    while (std::getline(ss, param, ';')) {
-      ics_keyval.value_params.push_back(param);
-    }
+  if (body.find(';') != std::string::npos) {
+    ics_keyval.complex = true;
   }
 
 
   return ics_keyval;
 }
 
-static void print_component(IcsComponent& c) {
-  std::cout << "Component Name: " << c.name << std::endl;
-  std::cout << "Key Values:" << std::endl;
+static void print_component(IcsComponent& c, size_t level = 0) {
+  std::string indent = "";
+  for (size_t i = 0; i < level; i++) {
+    indent += "\t";
+  }
+  std::cout << indent << "Component Name: " << c.name << std::endl;
+  std::cout << indent << "Key Values:" << std::endl;
 
   for (auto& kv : c.key_values) {
-    std::cout << "\t Key: " << kv.key << std::endl;
+    std::cout << indent << "\tKey: " << kv.key << std::endl;
     for (auto & p : kv.key_params) {
-      std::cout << "\t\t Key Param: " << p << std::endl;
+      std::cout << indent << "\t\tKey Param: " << p << std::endl;
     }
-    std::cout << "\t Value: " << kv.value << std::endl;
-    for (auto & p : kv.value_params) {
-      std::cout << "\t\t Value Param: " << p << std::endl;
+    std::cout << indent << "\tValue: " << kv.value << std::endl;
+    std::cout << indent << "\tComplex: " << kv.complex << std::endl << std::endl;
+  }
+
+  if (c.children.size() > 0) {
+    std::cout << indent << "\t***Children: " << std::endl;
+    for (auto& c : c.children) {
+      print_component(c, level + 1);
     }
-    std::cout << std::endl;
+  }
+}
+
+static IcsComponent parse_component(std::ifstream& ifs, const std::string name) {
+  IcsComponent comp;
+  comp.name = name;
+  std::string line;
+
+
+  while (true) {
+    getline_crlf(ifs, line);
+    auto kp = parse_line(line);
+
+    if (kp.key == BEGIN) {
+      comp.children.push_back(parse_component(ifs, kp.value));
+    } else if (kp.key == END) {
+      return comp;
+    } else {
+      comp.key_values.push_back(kp);
+    }
   }
 }
 
@@ -123,34 +145,19 @@ std::optional<Events::TodEvent> IcsParser::get_event() {
   }
 
   std::string line;
-  size_t parse_level = 0;
   IcsComponent component;
 
-  while (true) {
-    getline_crlf(m_ics_file, line);
-    auto kp = parse_line(line);
+  getline_crlf(m_ics_file, line);
+  auto kp = parse_line(line);
 
-    if (kp.key == BEGIN) {
-      if (kp.value == "VCALENDAR") {
-        continue;
-      }
-      if (parse_level == 0) {
-        component.name = kp.value;
-      }
-      parse_level++;
-    } else if (kp.key == END) {
-      if (kp.value == "VCALENDAR") {
-        break;
-      }
-      parse_level--;
-      if (parse_level == 0) {
-        print_component(component);
-        component.clear();
-      }
-    } else {
-      component.key_values.push_back(kp);
-    }
+  if (kp.value != "VCALENDAR") {
+    std::cout << "Not a valid VCALENDAR!" << std::endl;
+    return std::nullopt;
   }
+
+  IcsComponent comp = parse_component(m_ics_file, kp.value);
+  print_component(comp);
+
 
   return std::nullopt;
 }
