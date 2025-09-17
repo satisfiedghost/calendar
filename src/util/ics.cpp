@@ -81,7 +81,8 @@ static IcsKeyValue parse_line(const std::string& line) {
     std::string param;
 
     while (std::getline(ss, param, ';')) {
-      ics_keyval.key_params.push_back(param);
+      auto param_delim = param.find('=');
+      ics_keyval.key_params[param.substr(0, param_delim)] = param.substr(param_delim + 1);
     }
   }
 
@@ -105,8 +106,11 @@ static void print_component(IcsComponent& c, size_t level = 0) {
 
   for (auto& [_, v] : c.key_values) {
     std::cout << indent << "\tKey: " << v.key << std::endl;
-    for (auto & p : v.key_params) {
-      std::cout << indent << "\t\tKey Param: " << p << std::endl;
+    if (v.key_params.size() > 0) {
+      std::cout << indent << "\tKey Params: " <<  std::endl;
+      for (auto &[k, p] : v.key_params) {
+        std::cout << indent << "\t\t" << k << " = " << p << std::endl;
+      }
     }
     std::cout << indent << "\tValue: " << v.value << std::endl;
     std::cout << indent << "\tComplex: " << v.complex << std::endl << std::endl;
@@ -156,16 +160,17 @@ std::optional<Events::TodEvent> IcsParser::get_event() {
   auto kp = parse_line(line);
 
   IcsComponent comp = parse_component(m_ics_file, kp.value);
-  //print_component(comp);
+  print_component(comp);
   std::vector<VTimeZone> time_zones;
 
   for (const auto& tz : comp.children.at("VTIMEZONE")) {
     time_zones.emplace_back(*tz.get());
   }
 
-  for (const auto& tz : time_zones) {
-    std::cout << tz.tzid << std::endl;
-  }
+
+  //for (const auto& tz : time_zones) {
+  //  std::cout << tz.tzid << std::endl;
+  //}
 
 
   return std::nullopt;

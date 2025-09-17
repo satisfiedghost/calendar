@@ -13,7 +13,7 @@ namespace Util {
 // is interpreted as a key (with possible parameters) attached to an enclosing component
 struct IcsKeyValue {
   std::string key;
-  std::vector<std::string> key_params;
+  std::unordered_map<std::string, std::string> key_params;
   std::string value;
   bool complex = false;
 };
