@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <stdexcept>
 #include <iostream>
+#include <string>
 
 #include "util/ics.h"
 
@@ -102,19 +103,22 @@ static void print_component(IcsComponent& c, size_t level = 0) {
   std::cout << indent << "Component Name: " << c.name << std::endl;
   std::cout << indent << "Key Values:" << std::endl;
 
-  for (auto& kv : c.key_values) {
-    std::cout << indent << "\tKey: " << kv.key << std::endl;
-    for (auto & p : kv.key_params) {
+  for (auto& [_, v] : c.key_values) {
+    std::cout << indent << "\tKey: " << v.key << std::endl;
+    for (auto & p : v.key_params) {
       std::cout << indent << "\t\tKey Param: " << p << std::endl;
     }
-    std::cout << indent << "\tValue: " << kv.value << std::endl;
-    std::cout << indent << "\tComplex: " << kv.complex << std::endl << std::endl;
+    std::cout << indent << "\tValue: " << v.value << std::endl;
+    std::cout << indent << "\tComplex: " << v.complex << std::endl << std::endl;
   }
 
   if (c.children.size() > 0) {
-    std::cout << indent << "\t***Children: " << std::endl;
-    for (auto& c : c.children) {
-      print_component(c, level + 1);
+    std::cout << indent << "\tChildren: " << std::endl;
+    for (auto& [k, c] : c.children) {
+      std::cout << indent << "\tType: " << k << std::endl;
+      for (auto& ch : c) {
+        print_component(*ch.get(), level + 1);
+      }
     }
   }
 }
@@ -130,11 +134,12 @@ static IcsComponent parse_component(std::ifstream& ifs, const std::string name) 
     auto kp = parse_line(line);
 
     if (kp.key == BEGIN) {
-      comp.children.push_back(parse_component(ifs, kp.value));
+      // recursively add child components
+      comp.children[kp.value].push_back(std::make_unique<IcsComponent>(parse_component(ifs, kp.value)));
     } else if (kp.key == END) {
       return comp;
     } else {
-      comp.key_values.push_back(kp);
+      comp.key_values[kp.key] = kp;
     }
   }
 }
@@ -150,13 +155,17 @@ std::optional<Events::TodEvent> IcsParser::get_event() {
   getline_crlf(m_ics_file, line);
   auto kp = parse_line(line);
 
-  if (kp.value != "VCALENDAR") {
-    std::cout << "Not a valid VCALENDAR!" << std::endl;
-    return std::nullopt;
+  IcsComponent comp = parse_component(m_ics_file, kp.value);
+  //print_component(comp);
+  std::vector<VTimeZone> time_zones;
+
+  for (const auto& tz : comp.children.at("VTIMEZONE")) {
+    time_zones.emplace_back(*tz.get());
   }
 
-  IcsComponent comp = parse_component(m_ics_file, kp.value);
-  print_component(comp);
+  for (const auto& tz : time_zones) {
+    std::cout << tz.tzid << std::endl;
+  }
 
 
   return std::nullopt;
